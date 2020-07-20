@@ -44,7 +44,7 @@
   * [Prerrequisitos](#Prerrequisitos)
   * [Instalación](#Instalación)
 * [Uso](#Uso)
-* [Contributing](#Contributing)
+* [Contribuciones](#Contribuciones)
 * [Contacto](#Contacto)
 * [Agradecimientos](#Agradecimientos)
 
@@ -121,7 +121,7 @@ Como se ve en tal ....
 
 
 <!-- CONTACT -->
-## Contact
+## Contacto
 
 Llanos Mora  - email@example.com
 José del Campo Ávila  - email@example.com
