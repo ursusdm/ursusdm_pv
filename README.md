@@ -53,8 +53,6 @@
 <!-- ABOUT THE PROJECT -->
 ## Sobre el proyecto
 
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
-
 URSUS-DM PV es una herramienta de ayuda para la toma de decisiones en cuanto a la determinación de la ubicación óptima de instalaciones fotovoltaicas en áreas urbanas.
 
 * Navegue por el mapa y seleccione un área de interés
@@ -107,6 +105,10 @@ git clone https://github.com/ursusdm/ursusdm_pv.git
 
 * AAñadir ejemplos de uso de la herramienta (capturas de pantalla y descripción)
 
+Como se ve en tal ....
+[product-screenshot-1]
+
+
 
 <!-- CONTRIBUTING -->
 ## Contribuciones
@@ -136,4 +138,5 @@ Project Link: [https://servidor_de_la_app.com](https://servidor_de_la_app.com)
 ## Agradecimientos
 * Ir rellenando si fuera necesario ...
 
-[product-screenshot]: images/screenshot.png
+[product-screenshot-1]: screenshot1.png
+[product-screenshot-2]: screenshot1.png
