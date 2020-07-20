@@ -37,15 +37,15 @@
 <!-- TABLE OF CONTENTS -->
 ## Table of Contents
 
-* [Sobre el proyecto](#Sobre el proyecto)
-  * [Tecnologías](#Tecnologías)
-* [Cómo empezar?](#Cómo empezar?)
-  * [Prerrequisitos](#prerequisites)
-  * [Instalación](#Instalación)
-* [Uso](#usage)
-* [Contributing](#contributing)
-* [Contacto](#contact)
-* [Agradecimientos](#acknowledgements)
+* [Sobre el proyecto]
+  * [Tecnologías]
+* [Cómo empezar?]
+  * [Prerrequisitos]
+  * [Instalación]
+* [Uso]
+* [Contributing]
+* [Contacto]
+* [Agradecimientos]
 
 
 
@@ -68,8 +68,8 @@ La tecnología empleada actualmente para el desarrollo de la aplicación es la s
 * [R](https://cran.r-project.org/)
 * [R-Studio](https://rstudio.com/)
 * [R-Shiny](https://laravel.com)
-* [RSpatial] (https://rspatial.org/raster/spatial/8-rastermanip.html)
-* [Lidar] (http://centrodedescargas.cnig.es/CentroDescargas/index.jsp)
+* [R-Spatial](https://rspatial.org/raster/spatial/8-rastermanip.html)
+* [Lidar](http://centrodedescargas.cnig.es/CentroDescargas/index.jsp)
 
 
 
