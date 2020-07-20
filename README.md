@@ -37,15 +37,15 @@
 <!-- TABLE OF CONTENTS -->
 ## Table of Contents
 
-* [Sobre el proyecto]
-  * [Tecnologías]
-* [Cómo empezar?]
-  * [Prerrequisitos]
-  * [Instalación]
-* [Uso]
-* [Contributing]
-* [Contacto]
-* [Agradecimientos]
+* [Sobre el proyecto](#sobre-el-proyecto)
+  * [Tecnologías](#Tecnologías)
+* [Cómo empezar?](#Cómo_empezar?)
+  * [Prerrequisitos](#Prerrequisitos)
+  * [Instalación](#Instalación)
+* [Uso](#Uso)
+* [Contributing](#Contributing)
+* [Contacto](#Contacto)
+* [Agradecimientos](#Agradecimientos)
 
 
 
