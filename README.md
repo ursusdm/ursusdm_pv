@@ -36,7 +36,7 @@
 
 
 <!-- TABLE OF CONTENTS -->
-## Table of Contents
+## Contenidos
 
 * [Sobre el proyecto](#sobre-el-proyecto)
   * [Tecnologías](#Tecnologías)
