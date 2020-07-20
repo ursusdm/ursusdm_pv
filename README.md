@@ -22,8 +22,9 @@
 <!-- PROJECT LOGO -->
 <br />
 <p align="center">
+  
   <a>
-    <img src="images/ursus.png" alt="Logo" width="80" height="80">
+    <img src="ursus_logo.jpg">
   </a>
 
   <h3 align="center">Herramienta de ayuda para la ubicación óptima de sistemas fotovoltaicos en las ciudades</h3>
