@@ -119,8 +119,18 @@ git clone https://github.com/ursusdm/ursusdm_pv.git
 ## Contribuciones
 
 1. Clonar el proyecto
-3. Realizar Commits de sus aportaciones (`git commit -m 'Add some AmazingFeature'`)
-4. Realizar un Push a la rama (`git push origin feature/AmazingFeature`)
+```sh
+git clone https://github.com/ursusdm/ursusdm_pv.git
+```
+3. Commit. Preparar los cambios que se subirán a GitHub con un nombre representativo
+```sh
+git commit -m 'Add some Amazing Feature'
+```
+4. Push. Subir los cambios locales a GitHub
+```sh
+git push
+```
+
 5. Para descargar en local el código actual de la rama, realize un Pull 
 
 
@@ -128,7 +138,7 @@ git clone https://github.com/ursusdm/ursusdm_pv.git
 <!-- CONTACT -->
 ## Contacto
 
-Llanos Mora  - email@example.com 
+Llanos Mora López  - email@example.com 
 </br>
 José del Campo Ávila  - email@example.com
 
