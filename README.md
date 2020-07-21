@@ -147,7 +147,7 @@ José del Campo Ávila  - email@example.com
 
 La aplicación está disponible en el siguiente enlace
 
-Project Link: [https://servidor_de_la_app.com](https://servidor_de_la_app.com)
+Project Link: [https://ursusdm.shinyapps.io/ursusdm_pv/](https://servidor_de_la_app.com)
 
 
 <!-- ACKNOWLEDGEMENTS -->
