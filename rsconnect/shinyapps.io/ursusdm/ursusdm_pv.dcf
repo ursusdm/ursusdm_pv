@@ -1,0 +1,13 @@
+name: ursusdm_pv
+title: ursusdm_pv
+username:
+account: ursusdm
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 2597455
+bundleId: 3417436
+url: https://ursusdm.shinyapps.io/ursusdm_pv/
+when: 1595347827.31905
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: git.rtf|README.md|screenshot_1.png|screenshot_2.png|screenshot_3.png|screenshot_4.png|screenshot_5.png|screenshot_6.png|screenshot_7.png|shiny-cheatsheet.pdf|shinyapps.io.rtf|ursus_logo.jpg|URSUS_PV_DASHBOARD.mov
