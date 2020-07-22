@@ -63,7 +63,7 @@ La tecnología empleada actualmente para el desarrollo de la aplicación es la s
 
 * [R](https://cran.r-project.org/)
 * [R-Studio](https://rstudio.com/)
-* [R-Shiny](https://laravel.com)
+* [R-Shiny](https://shiny.rstudio.com/)
 * [R-Spatial](https://rspatial.org/raster/spatial/8-rastermanip.html)
 * [Lidar](http://centrodedescargas.cnig.es/CentroDescargas/index.jsp)
 
