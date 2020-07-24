@@ -9,6 +9,7 @@
 
 ###########################Libraries####################################################################### 
 
+library(igraph)
 library(raster)
 library (rgdal)
 library(RStoolbox)
@@ -73,15 +74,6 @@ getExtent <- function(catalogo) {
 }
 
 
-###############RsConnect#############################
-
-#Conectamos con shinyapps.io para subir la aplicación al servidor gratuito de R
-
-setupRsConnect <- function () {
-  rsconnect::setAccountInfo(name='ursusdm',
-                            token='B40C92CF096A590984D0E866DE8AFA96',
-                            secret='<SECRET>')
-}
 
 ###################################### segmentRoofs () ##########################################################
 
