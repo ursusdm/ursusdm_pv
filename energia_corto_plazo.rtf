@@ -1,0 +1,32 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2512
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+{\*\expandedcolortbl;;\cssrgb\c0\c0\c0;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww20680\viewh12360\viewkind0
+\deftab720
+\pard\pardeftab720\partightenfactor0
+
+\f0\fs24 \cf0 \expnd0\expndtw0\kerning0
+La parte de integraci\'f3n de la herramienta con el sistema predictor para realizar c\'e1lculos a corto plazo est\'e1 bastante avanzada o casi lista:\
+\
+* Implementados los scripts autom\'e1ticos de descarga diaria de datos del AEMET de observaciones convencionales, de radiaci\'f3n y de predicciones utilizando la api. (Falta probarlos de forma automatizada con CRON) (lanz\'e1ndolos con el script de R funcionan perfectamente)\
+\
+* La parte  o bloque de c\'e1lculos de energ\'eda a corto plazo est\'e1 casi implementada; en concreto est\'e1 listo lo siguiente:\
+\
+	-> Para cada tejado, encontrar la estaci\'f3n meteorol\'f3gica, municipio y estaci\'f3n de radiaci\'f3n m\'e1s cercana obteniendo la distancia menor de la latitud y longitud del tejado a cada una de las estaciones o municipios\
+\
+	-> Se obtienen los siguientes datos a partir del csv de observaciones convencionales de la estaci\'f3n m\'e1s cercana al tejado (t_dia_previo, t_9_12_diaprevio, t_13_15_diaprevio, h8_diaprevio, h14_diaprevio,  precipitac_dia_previo, humedad_diaria)\
+\
+	-> Se obtienen los siguientes datos a partir del csv de predicciones horarias del municipio m\'e1s cercano al tejado que se est\'e9 procesando (Predicc_temp_day_C, Predicc_Relative_humidity_day_0_1, Predicc_temp_10_11_12_C, Predicc_temp_13_14_15_C, Predicc_R_hum_10_11_12,  		  Predicc_R_hum_13_14_15, Predicc_temperatura_horaria, Predicc_vviento_horario, Predicc_cloudy_sky_day_0_1, Predicc_cloudy_10_11_12, Predicc_cloudy_13_14_15)\
+\
+	-> Obtenemos el gdprevio (radiaci\'f3n global del d\'eda anterior)  partir del csv de radiaci\'f3n solar de la estaci\'f3n de radiaci\'f3n m\'e1s cercana al tejado que se est\'e9 procesando\
+\
+	-> Obtenemos el dataframe de radiaci\'f3n incidente para la latitud, longitud, orientaci\'f3n e inclinaci\'f3n del tejado que se est\'e9 procesando y nos quedamos con las medidas para el d\'eda siguiente (d\'eda del que se va a predecir la energ\'eda)\
+\
+	-> Calculamos la radiaci\'f3n extraterrestre diaria gh con los valores (excentricidad_diaria, w_sr, declinacion_solar, y latitud) obtenidos en el paso anterior\
+\
+	-> Obtenemos k_d_previo <- gd_previo/ gh\
+\
+	-> Obtenemos la observaci\'f3n con la que trabajar\'e1 el sistema predictor para predecir el kh\'92 (8,..16)\
+\
+Faltar\'eda utilizar el sistema predictor que nos dar\'e1 el kh\'92, y a partir de eso, obtener la energ\'eda para el pr\'f3ximo d\'eda que ten\'e9is que decirme c\'f3mo calcularla.}

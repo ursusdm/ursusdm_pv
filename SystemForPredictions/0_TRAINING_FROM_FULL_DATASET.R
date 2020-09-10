@@ -1,0 +1,5 @@
+source("./01_cleaning_full_dataset.R")
+source("./02_inducing_RF_for_regression.R")
+source("./03_creating_dataset_for_classification.R")
+source("./04_inducing_LMT_for_classification.R")
+source("./05_creating_dataset_with_type_of_days.R")

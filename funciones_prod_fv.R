@@ -177,6 +177,7 @@ df_energia_solar <- function(lat, lon, alt = NULL, inclinacion = 0, orientacion 
         
         if (h == hora_inicial -1){
           acimut_d <- - acimut_d
+          w_d = -w_d ####CAMBIADO esta línea es nueva
         }
         
         rad_d <- radiacion_incidente_extraterrestre_primera_ultima_hora(E, delta, w_d, altura_d, lat, inclinacion, segundos)
@@ -301,6 +302,7 @@ radiacion_reflejada <- function(radiacion_global, albedo = 0.2, beta = 0){
 ### Radiación directa:
 
 wsrm <- function(orientacion, beta, latitud, declinacion, angulo_solar){
+  
   if (orientacion < 0){
     
     signo <- -1
@@ -316,8 +318,10 @@ wsrm <- function(orientacion, beta, latitud, declinacion, angulo_solar){
   
   wsrm <- acos((A*B+signo*sqrt(A*A-B*B+1))/(A*A+1))
   
-  wsrm <- min(wsrm,angulo_solar)
+  wsrm <- - min(wsrm,angulo_solar) ####CAMBIADO aquí he añadido el signo -
+  
   wsrm
+  
 }
 
 wsrt <- function(orientacion, beta, latitud, declinacion, angulo_solar){
@@ -356,7 +360,7 @@ radiacion_directa <- function(r_global, r_difusa, beta = 0, orientacion = 0, aci
     if(orientacion >0 && acimut_solar_h <0){
       wsrm <- wsrm(orientacion, beta, latitud, declinacion, angulo_solar_h)
       
-      if(angulo_solar_h > wsrm){
+      if(angulo_solar_h < wsrm){ ####CAMBIADO Aquí ponía > pero es <, porque ahora los dos son negativos
         angulo_solar_h <- wsrm
       }
       

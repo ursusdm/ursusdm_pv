@@ -29,10 +29,17 @@ library(ggmap)
 library(leaflet.extras)
 library(sp)
 
-
 #Add energy production calculation functions script
 source("funciones_prod_fv.R")
 
+#Add script para la predicción de energía a corto plazo
+source("procesamientoEnergiaCortoPlazo")
+
+#Add AEMET API automatization download scripts
+source("automat_obs_convenc_1.R")
+source("automat_obs_convenc_2.R")
+source("automat_obs_radiacion.R")
+source("automat_pred_horarias.R")
 
 ############################getExtent()#####################################################################
 
