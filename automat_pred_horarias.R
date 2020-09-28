@@ -1,6 +1,6 @@
 
 
-###################################### SCRIPT DE DESCARGA AUTOMÁTICA DE FICHEROS NECESARIOS DEL AEMET ##############################
+###################################### SCRIPT DE DESCARGA AUTOMÁTICA DE PREDICCIONES DEL DÍA DE AYER PARA HOY DEL AEMET ##############################
 
 
 ################################################################## Libraries #########################################################################
@@ -24,6 +24,12 @@ api_key <-"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJtYXJ0YWZlY3VAZ21haWwuY29tIiwianRpIjoi
 url_base <- "https://opendata.aemet.es/opendata/api"
 
 prediccion_horaria_url <- "prediccion/especifica/municipio/horaria"
+
+#################### LECTURA DE LOS CSV NECESARIOS ######################
+
+#Importante que ya existan en el servidor dichos ficheros (descargar con script de descarga en caso de no disponer de los mismos)
+
+municipios <- read.csv ("municipios.csv",  header=TRUE, stringsAsFactors=FALSE, fileEncoding="latin1")
 
 ################################################################# Función GENÉRICA de consulta a la api #############################################
 
@@ -70,13 +76,6 @@ get_response <- function(url_base, url = "", api_key, id = ""){
 
 
 
-#################### LECTURA DE LOS CSV NECESARIOS ######################
-
-#Importante que ya existan en el servidor dichos ficheros que solo son necesarios descargar una vez
-
-
-municipios <- as.data.frame(read_csv("municipios.csv"))
-estacionesMeteorologicas <- as.data.frame(read_csv("estaciones_meteorologicas.csv"))
 
 
 ############### Función para obtener los datos de las estaciones meteorológicas de obs. convencionales de un municipio ####################
@@ -102,7 +101,7 @@ municipiosDeInteres <- obtenerMunicipios("Málaga")
 
 # municipiosDeInteres <- rbind (municipiosDeInteres,munSevilla)
 
-descargarPrediccionesHorarias ()
+
 
 ### Se descargará a las 10:00 cada día un csv con las predicciones horarias
 ### Se programa con R-CRON cron_rstudioaddin() ############################
@@ -210,4 +209,6 @@ desanidamiento <- function(prediccion_horaria_df) {
   list ( columnas_intervalo = prediccion_cols_prob, 
          columnas_horas     = prediccion_cols_horarias)
 }
+
+descargarPrediccionesHorarias ()
 

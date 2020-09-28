@@ -1,7 +1,7 @@
 
 
-###################################### SCRIPT DE DESCARGA AUTOMÁTICA DE FICHEROS NECESARIOS DEL AEMET ##############################
-
+###################################### SCRIPT DE DESCARGA AUTOMÁTICA DE DATOS DE RADIACIÓN ##############################
+###################################### CADA dÍA A LAS 10h
 
 ################################################################## Libraries #########################################################################
 
@@ -24,6 +24,13 @@ api_key <-"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJtYXJ0YWZlY3VAZ21haWwuY29tIiwianRpIjoi
 url_base <- "https://opendata.aemet.es/opendata/api"
 
 observaciones_radiacion_url <- "red/especial/radiacion"
+
+#################### LECTURA DE LOS CSV NECESARIOS ######################
+
+#Importante que ya existan en el servidor dichos ficheros que solo son necesarios descargar una vez
+
+
+estacionesRadiacion <- as.data.frame(read_csv("estaciones_radiacion.csv"))
 
 ################################################################# Función GENÉRICA de consulta a la api #############################################
 
@@ -70,17 +77,11 @@ get_response <- function(url_base, url = "", api_key, id = ""){
 
 
 
-#################### LECTURA DE LOS CSV NECESARIOS ######################
 
-#Importante que ya existan en el servidor dichos ficheros que solo son necesarios descargar una vez
-
-
-estacionesRadiacion <- as.data.frame(read_csv("estaciones_radiacion.csv"))
 
 
 #################################################### SCRIPT ###############################################
 
-descargarObservacionesRadiacion ()
 
 ### Se descargará a las 10:00 cada día un csv con las observaciones de radiación del día anterior de cada estación. 
 ### Se programa con R-CRON cron_rstudioaddin() ############################
@@ -104,7 +105,7 @@ radiacion <- function(base, radiacion, api_key) {
   
   csv_rad <- read_delim(datos_rad, delim =  ";")
   
-  malaga <- which(csv_rad$Estación == "Málaga")
+  malaga <- which(csv_rad$Indicativo == "6156")
   
   csv_rad$Indicativo[malaga] <- paste0(csv_rad$Indicativo[malaga], "X")
   
@@ -117,3 +118,6 @@ radiacion <- function(base, radiacion, api_key) {
   csv_rad
   
 }
+
+descargarObservacionesRadiacion ()
+

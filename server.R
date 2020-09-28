@@ -33,13 +33,8 @@ library(sp)
 source("funciones_prod_fv.R")
 
 #Add script para la predicción de energía a corto plazo
-source("procesamientoEnergiaCortoPlazo")
+source("procesamientoEnergiaCortoPlazo.R")
 
-#Add AEMET API automatization download scripts
-source("automat_obs_convenc_1.R")
-source("automat_obs_convenc_2.R")
-source("automat_obs_radiacion.R")
-source("automat_pred_horarias.R")
 
 ############################getExtent()#####################################################################
 
@@ -234,7 +229,7 @@ showRoofAreas2 <- function () {
 
 #####################################addnewDataToDataset ############################################################################
 
-## Return a daset with roof slopes, orientation, lat, lng
+## Return a daset with roof slopes, orientation, lat, lng para el cálculo a largo plazo
 
 addnewDataToDataset <- function (ds) {
   
@@ -243,23 +238,22 @@ addnewDataToDataset <- function (ds) {
   #print (values)
   
   
-  
-  # Array con las latitudes para cada edificio
+  # Array con las latitudes para cada tejado
   latsArray <- c()
-  # Array con las lngitudes para cada edificio
+  # Array con las lngitudes para cada tejado
   lngsArray <- c()
-  # Array con las latitudes para cada edificio
+  # Array con las latitudes para cada tejado
   slopesArray <- c()
-  # Array con las lngitudes para cada edificio
+  # Array con las lngitudes para cada tejado
   aspectssArray <- c()
-  # Array con las producciones para placas de silicio de cada edificio
+  # Array con las producciones para placas de silicio de cada tejado
   silicePVProductionArray <- c()
   
   tejadosAProcesar <- ds$idArea
   
   tejadoEnProceso <- 1
   
-  # para cada tejado (para cada valor distinto de componente conexa) que cumpla las condiciones de pendientes, orientaciones, y superficie
+  # para cada tejado (para cada valor distinto de componente conexa) que cumpla las condiciones de pendientes, orientaciones, y area > a 4m2
   
   for (v in tejadosAProcesar) {
     
@@ -267,7 +261,7 @@ addnewDataToDataset <- function (ds) {
     #Obtenemos en un array las posiciones (indices) donde los valores de las componentes conexas son = al valor del tejado v que se está procesando
     indexes <- which (values (cC==v) )
     
-    if (length(indexes)>=4) { # cc (tejados) con área >=4m2. Procesando una componente conexa con menos de 4m2 "casca" la aplicacion
+    # if (length(indexes)>=4) { # cc (tejados) con área >=4m2. Procesando una componente conexa con menos de 4m2 "casca" la aplicacion en el bloque de cálculo
       
       #Calculamos la media de los valores de inclinaciones para las coordenadas del tejado
       avgSlope <- mean(slope [indexes])
@@ -285,11 +279,7 @@ addnewDataToDataset <- function (ds) {
       
       #print (length(coords))
       
-      
-      
-        
-        showModal(modalDialog( title = paste("Calculando producción del tejado ", tejadoEnProceso, "de", nrow(ds), "tejados"), footer=NULL))
-        
+       
         dataFrameCoords <- as.data.frame(coords)
         
         #print ("dataFrameCoords")
@@ -317,7 +307,9 @@ addnewDataToDataset <- function (ds) {
         
         #Calculamos la producción si la orientación está entre 90 y 270
         
-      if ( (abs (as.numeric(avgAspect))>90) & ( abs(as.numeric(avgAspect))<270) ) {  
+      if ( (abs (as.numeric(avgAspect))>90) & ( abs(as.numeric(avgAspect))<270) ) { 
+        
+        showModal(modalDialog( title = paste("Calculando producción del tejado ", tejadoEnProceso, "de", nrow(ds), "tejados"), footer=NULL))
         
         produccion <- extraccion_valores_medios (latitud = dfT [1,2], longitud = dfT [1,1], as.numeric(avgSlope), as.numeric(avgAspect), proc_area, datos_aemet)
         
@@ -325,6 +317,8 @@ addnewDataToDataset <- function (ds) {
         #print (produccion)
         
         silicePVProductionArray <- append (silicePVProductionArray,prodProcesed)
+        
+        removeModal()
         
       } 
         
@@ -340,9 +334,9 @@ addnewDataToDataset <- function (ds) {
       slopesArray <- append (slopesArray,avgSlope)
       aspectssArray <- append (aspectssArray,avgAspect)
       
-      removeModal()
       
-    }
+      
+    #}
     
     tejadoEnProceso <- tejadoEnProceso +1
  
@@ -366,6 +360,151 @@ addnewDataToDataset <- function (ds) {
 
 
 #####################################
+
+#####################################addnewDataToDataset ############################################################################
+
+## Return a daset with roof slopes, orientation, lat, lng para el cálculo a un día vista
+
+addnewDataToDataset2 <- function (ds) {
+  
+  val_ <- unique(cC)
+  
+  #print (values)
+  
+  
+  # Array con las latitudes para cada tejado
+  latsArray <- c()
+  # Array con las lngitudes para cada tejado
+  lngsArray <- c()
+  # Array con las latitudes para cada tejado
+  slopesArray <- c()
+  # Array con las lngitudes para cada tejado
+  aspectssArray <- c()
+  # Array con las producciones para placas de silicio de cada tejado
+  silicePVProductionArray <- c()
+  
+  tejadosAProcesar <- ds$idArea
+  
+  tejadoEnProceso <- 1
+  
+  # para cada tejado (para cada valor distinto de componente conexa) que cumpla las condiciones de pendientes, orientaciones, y area > a 4m2
+  
+  for (v in tejadosAProcesar) {
+    
+    
+    #Obtenemos en un array las posiciones (indices) donde los valores de las componentes conexas son = al valor del tejado v que se está procesando
+    indexes <- which (values (cC==v) )
+    
+    #if (length(indexes)>=4) { # cc (tejados) con área >=4m2. Procesando una componente conexa con menos de 4m2 "casca" la aplicacion en el bloque de cálculo
+      
+      #Calculamos la media de los valores de inclinaciones para las coordenadas del tejado
+      avgSlope <- mean(slope [indexes])
+      avgSlope<- format(round(avgSlope, 2), nsmall = 2)
+      #Calculamos la media de los valores de orientaciones para las coordenadas del tejado
+      avgAspect <- mean(aspect [indexes])
+      avgAspect<- format(round(avgAspect, 2), nsmall = 2)
+      #Calculamos las coordenadas del tejado que se está procesando (latitudes y longitudes) y tomamos la primera latitud y longitud
+      lats<- coordinates (slope) [indexes,1]
+      lngs <- coordinates (slope) [indexes,2]
+      
+      # Convert lat lng -UTM- to lat lng 
+      
+      coords <- coordinates (slope) [indexes,]
+      
+      #print (length(coords))
+      
+
+      
+      
+      dataFrameCoords <- as.data.frame(coords)
+      
+      #print ("dataFrameCoords")
+      #print (dataFrameCoords)
+      
+      colnames(dataFrameCoords) <- c("x_coord","y_coord")
+      
+      
+      
+      # Creamos un SpatialPoints object con las coordenadas del polígono en UTM
+      cord.UTM = SpatialPoints(cbind(dataFrameCoords$x_coord, dataFrameCoords$y_coord), proj4string=CRS("+proj=utm +zone=30 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs" ))
+      
+      # Convertimos las coordenadas del polígono  UTM a lat lng 
+      cord.dec <- spTransform(cord.UTM, CRS("+proj=longlat"))
+      
+      #Obtenemos un dataframe con las coordenadas del sistema Lat Lng
+      dfT <- as.data.frame(cord.dec)
+      
+      #Area que se está procesando
+      procesedArea <- ds %>%
+        filter(ds$idArea == v) 
+      
+      
+      proc_area <- procesedArea$area_m2
+      
+      #Calculamos la producción si la orientación está entre 90 y 270
+      
+      if ( (abs (as.numeric(avgAspect))>90) & ( abs(as.numeric(avgAspect))<270) ) {  
+        
+        showModal(modalDialog( title = paste("Calculando producción del tejado ", tejadoEnProceso, "de", nrow(ds), "tejados"), footer=NULL))
+        
+        #Aqui es dónde hay que tocar
+        
+        prod_un_dia_vista <- calcularEnergiaDiaSiguiente (lat = dfT [1,2], lon = dfT [1,1], as.numeric(avgAspect), as.numeric(avgSlope), proc_area)
+        
+        
+        #producción horaria en kw/h
+        
+        prodProcesed <- round(sum(prod_un_dia_vista)/1000,1)
+        
+        #producción total del tejado en kw/h
+
+        silicePVProductionArray <- append (silicePVProductionArray,prodProcesed)
+        
+        removeModal()
+        
+        
+        
+        
+        
+      } 
+      
+      
+      else { ##Cuando no podamos calcular la produción por no tener orientacion entre 90 y 270, el valor de prod. será -1 (luego se elminian del dataframe)
+        silicePVProductionArray <- append (silicePVProductionArray,-1)
+      }
+      
+      #Tomamos la primera coordenada de lat y lng del tejado que se está procesando
+      latsArray <- append (latsArray,dfT [1,2]) 
+      lngsArray <- append (lngsArray,dfT [1,1]) 
+      
+      slopesArray <- append (slopesArray,avgSlope)
+      aspectssArray <- append (aspectssArray,avgAspect)
+      
+      
+      
+    # }
+    
+    tejadoEnProceso <- tejadoEnProceso +1
+    
+  }
+  
+  #add columns to ds
+  
+  ds$lat <- latsArray
+  ds$lng <- lngsArray
+  ds$slope <- slopesArray
+  ds$orientation <- aspectssArray
+  ds$produccion <- silicePVProductionArray
+  
+  print (ds)
+  
+  #Eliminamos del ds los que tienen prod. -1; es decir las filas (tejados) para los que no se pudo calcular la prod. debido a que su orientacion no estaba entre 90 y 270
+  ds <- ds %>%
+    filter(as.numeric(ds$produccion) >0) 
+  
+  return (ds)
+  
+}
 
 #####################################CREATE connected component raster roof areas############################################################################
 
@@ -409,9 +548,7 @@ extents <- getExtent (ctg)
 
 ###############################################CARGAMOS DATOS DE MALAGA DEL AEMET############################################################################
 
-
 datos_aemet <- datos_malaga ()
-
 
 #################
 
@@ -545,13 +682,11 @@ shinyServer(function(input, output) {
       #shinyjs::show("showSlopes")
       #shinyjs::show("slopeMulti")
       
-      
-      
+ 
       #Activar para el concurso. Desactivar para app normal
       shinyjs::show("slopeMulti2")
       shinyjs::show("showSlopes2")
   
-      
 
     })
     
@@ -633,18 +768,25 @@ shinyServer(function(input, output) {
       
 
       #Salida en el panel lateral del área disponible
-      output$graficPlot <- renderPlot({
+      # output$graficPlot <- renderPlot({
+      #   
+      #   plot (slopeDiscretization, col= rainbow(lengthSlopeMulti), main ="1.Planos, 2.Ligeramente inclinados, 3.Inclinados, 4.Muy inclinados")
+      #   
+      # })
+      # 
+      #Salida en el panel lateral del área disponible
+      output$graficPlot2 <- renderPlot({
+        
+        plot (slope, col= rainbow(4), main ="Pendiente en º de todos los tejados" )
+        
+      })
+      
+      output$graficPlot9 <- renderPlot({
         
         plot (slopeDiscretization, col= rainbow(lengthSlopeMulti), main ="1.Planos, 2.Ligeramente inclinados, 3.Inclinados, 4.Muy inclinados")
         
       })
       
-      #Salida en el panel lateral del área disponible
-      output$graficPlot2 <- renderPlot({
-        
-        plot (slope, col= rainbow(4), main ="Pendiente º" )
-        
-      })
       
       #Salida en el panel lateral del área disponible
       output$graficPlot3 <- renderImage({
@@ -800,18 +942,25 @@ shinyServer(function(input, output) {
       
     
       #Salida en el panel lateral del área disponible
-      output$graficPlot <- renderPlot({
+      # output$graficPlot <- renderPlot({
+      #   
+      #   plot (slopeDiscretization, col = rainbow(lengthSlopeMulti2), main ="1.[0-10), 2.[10-20),3.[20-30), 4.[30-40), 5.[40-50), 6.[50-60), 7.[60-70)")
+      #   
+      # })
+      
+      #Salida en el panel lateral del área disponible
+      output$graficPlot2 <- renderPlot({
+        
+        plot (slope, main ="Pendiente en º de todos los tejados" )
+        
+      })
+      
+      output$graficPlot9 <- renderPlot({
         
         plot (slopeDiscretization, col = rainbow(lengthSlopeMulti2), main ="1.[0-10), 2.[10-20),3.[20-30), 4.[30-40), 5.[40-50), 6.[50-60), 7.[60-70)")
         
       })
       
-      #Salida en el panel lateral del área disponible
-      output$graficPlot2 <- renderPlot({
-        
-        plot (slope, main ="Pendiente º" )
-        
-      })
       
       #Salida en el panel lateral del área disponible
       output$graficPlot3 <- renderImage({
@@ -819,6 +968,12 @@ shinyServer(function(input, output) {
         list(src = "www/images/roof_class.png", contentType = "image/png", width =600, height =500)
         
       }, deleteFile = FALSE)
+      
+      output$graficPlot9 <- renderPlot({
+        
+        plot (slopeDiscretization, col = rainbow(lengthSlopeMulti2), main ="1.[0-10), 2.[10-20),3.[20-30), 4.[30-40), 5.[40-50), 6.[50-60), 7.[60-70)")
+        
+      })
       
       
       
@@ -909,17 +1064,23 @@ shinyServer(function(input, output) {
       
     
       #Salida en el panel lateral del área disponible
-      output$graficPlot <- renderPlot({
-        
-        
-        plot (aspectDiscretization, col= rainbow(lengthAspectMulti), main ="Orientación 1.N, 2.E, 3.S, 4.W")
-        
-      })
+      # output$graficPlot <- renderPlot({
+      #   
+      #   
+      #   plot (aspectDiscretization, col= rainbow(lengthAspectMulti), main ="Orientación 1.N, 2.E, 3.S, 4.W")
+      #   
+      # })
       
       #Salida en el panel lateral del área disponible
       output$graficPlot4 <- renderPlot({
         
-        plot(aspect, main ="Orientacion º")
+        plot(aspect, main ="Orientacion en º de todos los tejados")
+        
+      })
+      
+      output$graficPlot10 <- renderPlot({
+        
+        plot (aspectDiscretization, col= rainbow(lengthAspectMulti), main ="Orientación 1.N, 2.E, 3.S, 4.W")
         
       })
       
@@ -1428,18 +1589,25 @@ shinyServer(function(input, output) {
 
       
       #Salida en el panel lateral del área disponible
-      output$graficPlot <- renderPlot({
+      # output$graficPlot <- renderPlot({
+      #   
+      #   plot (aspectDiscretization, col = rainbow(lengthAspectMulti2), main ="1.[0-10), 2.[10-20),3.[20-30), 4.[30-40), 5.[40-50), 6.[50-60), 7.[60-70), ... 36.4.[350-360]")
+      #   
+      # })
+      
+      #Salida en el panel lateral del área disponible
+      output$graficPlot4 <- renderPlot({
+        
+        plot (aspect, main ="Orientación en º de todos los tejados" )
+        
+      })
+      
+      output$graficPlot10 <- renderPlot({
         
         plot (aspectDiscretization, col = rainbow(lengthAspectMulti2), main ="1.[0-10), 2.[10-20),3.[20-30), 4.[30-40), 5.[40-50), 6.[50-60), 7.[60-70), ... 36.4.[350-360]")
         
       })
       
-      #Salida en el panel lateral del área disponible
-      output$graficPlot4 <- renderPlot({
-        
-        plot (aspect, main ="Orientación º" )
-        
-      })
       
       #Salida en el panel lateral del área disponible
       output$graficPlot3 <- renderImage({
@@ -1458,11 +1626,11 @@ shinyServer(function(input, output) {
       
       areasRaster <- showRoofAreas()
       #Salida en el panel lateral del área disponible
-      output$graficPlot <- renderPlot({
-        
-        plot (areasRaster, legend=FALSE, main ="Tejados", col = "grey")
-        
-      })
+      # output$graficPlot <- renderPlot({
+      #   
+      #   plot (areasRaster, legend=FALSE, main ="Tejados", col = "grey")
+      #   
+      # })
       
       output$graficPlot5 <- renderPlot({
         
@@ -1499,7 +1667,7 @@ shinyServer(function(input, output) {
       
       output$totalRoofAreaBox <- renderInfoBox({
         infoBox(
-          "Areas disponibles > 4m2", nrow(fullDS), icon = icon("check"),
+          "Tejados procesados (cumplen las restricciones: >4m2, orientación [90º-270º], ...", nrow(fullDS), icon = icon("check"),
           color = "purple"
         )
       })
@@ -1530,11 +1698,11 @@ shinyServer(function(input, output) {
       
       areasRaster <- showRoofAreas2()
       #Salida en el panel lateral del área disponible
-      output$graficPlot <- renderPlot({
-        
-        plot (areasRaster, legend=FALSE, main ="Tejados", col = "grey")
-        
-      })
+      # output$graficPlot <- renderPlot({
+      #   
+      #   plot (areasRaster, legend=FALSE, main ="Tejados", col = "grey")
+      #   
+      # })
       
       output$graficPlot5 <- renderPlot({
         
@@ -1555,12 +1723,12 @@ shinyServer(function(input, output) {
       areaDS <- createRoofAreaDataset(cC)
       
       areaDS <- areaDS %>%
-        filter(areaDS$area_m2>=4)
+        filter(areaDS$area_m2>4)
       
       val_ <- unique(cC)
       
  
-      #Añadir la lat y lng media del tejado (componente conexa) al dataset
+      #Obtener Dataset con las producciones de energía media diaria y demás características de los tejados
       fullDS <- addnewDataToDataset (areaDS)
       
       output$areatable = DT::renderDataTable({
@@ -1569,7 +1737,7 @@ shinyServer(function(input, output) {
       
       output$totalRoofAreaBox <- renderInfoBox({
         infoBox(
-          "Areas disponibles > 4m2", nrow(fullDS), icon = icon("check"),
+          "Tejados procesados (cumplen las restricciones: >4m2, orientación [90º-270º], ...", nrow(fullDS), icon = icon("check"),
           color = "purple"
         )
       })
@@ -1588,6 +1756,80 @@ shinyServer(function(input, output) {
         )
       })
     
+      
+      
+    } )
+    
+    
+    
+    ## Boton de estimación a un día vista
+    
+    observeEvent(input$showArea4, {
+      
+      areasRaster <- showRoofAreas2()
+      
+      #Salida en el panel lateral del área disponible
+      # output$graficPlot <- renderPlot({
+      #   
+      #   plot (areasRaster, legend=FALSE, main ="Tejados", col = "grey")
+      #   
+      # })
+      
+      output$graficPlot5 <- renderPlot({
+        
+        plot (areasRaster, legend=FALSE, main ="Tejados", col = "grey")
+        
+      })
+      
+      #Generamos el dataset de las áreas de los tejados que cumplen las condiciones
+      cC <<- createRoofAreaConnectedComponents(areasRaster)
+      
+      output$graficPlot20 <- renderPlot({
+        
+        plot(na.omit(cC), col= rev(rainbow(max(na.omit(values(cC))))), main=paste("Áreas totales disponibles:",max(na.omit(values(cC)))))
+        
+      })
+      
+      
+      areaDS <- createRoofAreaDataset(cC)
+      
+      #Nos quedamos con los tejados con área >4m2
+      
+      areaDS <- areaDS %>%
+        filter(areaDS$area_m2>4)
+      
+      #id de cada componente conexa (de cada tejado a procesar)
+      val_ <- unique(cC)
+      
+      
+      #ADataset completo con los cálculos de producción a un día vista
+      fullDS <- addnewDataToDataset2 (areaDS)
+      
+      output$areatable2 = DT::renderDataTable({
+        fullDS
+      })
+      
+      output$totalRoofAreaBox2 <- renderInfoBox({
+        infoBox(
+          "Areas disponibles > 4m2", nrow(fullDS), icon = icon("check"),
+          color = "purple"
+        )
+      })
+      
+      
+      #Obtenemos la producción total
+      prodTotal <- fullDS %>%
+        filter(as.numeric(fullDS$produccion)>0) %>%
+        summarise(sum(fullDS$produccion))
+      
+      #Renderizamos
+      output$totalEnergyAreaBox2 <- renderInfoBox({
+        infoBox(
+          "Producción total", prodTotal, icon = icon("solar-panel"),
+          color = "orange"
+        )
+      })
+      
       
       
     } )

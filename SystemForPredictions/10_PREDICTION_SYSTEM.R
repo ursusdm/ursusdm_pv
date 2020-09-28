@@ -4,8 +4,8 @@ library(RWeka)
 library(tidyverse)
 
 # CHECKING FOR MODELS
-file_regression <- "random_forest_regression_model.rds"
-file_classification <- "lmt_classification_model.rds"
+file_regression <- "SystemForPredictions/random_forest_regression_model.rds"
+file_classification <- "SystemForPredictions/lmt_classification_model.rds"
 
 if (!(file.exists(file_regression) &&
       file.exists(file_classification))) {
@@ -15,9 +15,11 @@ if (!(file.exists(file_regression) &&
   model_rf <- readRDS(file_regression)
   model_lmt <- readRDS(file_classification)
   
-  description_centroid <- read.csv("centroids_14_types_of_days.csv")
+  description_centroid <- read.csv("SystemForPredictions/centroids_14_types_of_days.csv")
   
-  observations <- read.csv("../aemet/observations.csv")
+  observations <- read.csv(file = paste ( "aemet/","observations.csv"))
+  
+
   
   # calculate gdext_previo needed in the regression model
   observations <- observations %>% 
@@ -46,7 +48,7 @@ if (!(file.exists(file_regression) &&
   # including new attributes to original observations
   observations_with_kh_prediction <- cbind(observations,CLUSTER_with_kh_prediction)
   
-  write.csv(observations_with_kh_prediction, "observations+kh_prediction.csv", row.names=FALSE)
+  write.csv(observations_with_kh_prediction, file = paste ( "aemet/","observations+kh_prediction.csv"), row.names = FALSE)
 }
 
 

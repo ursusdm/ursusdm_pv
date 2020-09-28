@@ -1,7 +1,8 @@
 
 
-###################################### SCRIPT DE DESCARGA AUTOMÁTICA DE FICHEROS NECESARIOS DEL AEMET ##############################
+###################################### SCRIPT DE DESCARGA AUTOMÁTICA DE LAS OBSERVACIONES CONVENCIONALES DE LAS ESTACIONES##############################
 
+### Descargar cada día las 00 y a las 10 de forma automática #########
 
 ################################################################## Libraries #########################################################################
 
@@ -24,6 +25,8 @@ api_key <-"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJtYXJ0YWZlY3VAZ21haWwuY29tIiwianRpIjoi
 url_base <- "https://opendata.aemet.es/opendata/api"
 
 observaciones_convencionales_url <- "observacion/convencional/datos/estacion"
+
+estacionesMeteorologicas <- as.data.frame(read_csv("estaciones_meteorologicas.csv"))
 
 ################################################################# Función GENÉRICA de consulta a la api #############################################
 
@@ -72,10 +75,9 @@ get_response <- function(url_base, url = "", api_key, id = ""){
 
 #################### LECTURA DE LOS CSV NECESARIOS ######################
 
-#Importante que ya existan en el servidor dichos ficheros que solo son necesarios descargar una vez
+#Importante que ya existan en el servidor dichos ficheros (descargar sólo una vez con el script de descarga)
 
 
-estacionesMeteorologicas <- as.data.frame(read_csv("estaciones_meteorologicas.csv"))
 
 
 ############### Función para obtener los datos de las estaciones meteorológicas de obs. convencionales de un municipio ####################
@@ -90,23 +92,24 @@ obtenerEstaciones<- function (prov = "MALAGA") {
   
 }
 
+estaciones <- obtenerEstaciones("MALAGA")
 
-#################################################### SCRIPT ###############################################
 
 #Para cada provincia con la que trabaje nuestro sistema, obtenemos las estaciones meteorológicas de observaciones convencionales
 
-estaciones <- obtenerEstacionesMunicipio("MALAGA")
 
-#estSevilla <- obtenerEstacionesMunicipio("SEVILLA")
+
+#estSevilla <- obtenerEstaciones("SEVILLA")
 
 #estaciones <- rbind (estaciones,estSevilla)
 
 
-descargarObservacionesConvencionales ()
 
-########################## Se descargará a las 10:00 cada día las observaciones convencionales de cada estación. Se programa con R-CRON cron_rstudioaddin() ############################
 
-descargarObservacionesConvencionales () <- function() {
+########################## Se descargará a las 00:00 cada día las observaciones convencionales de cada estación. Se programa con R-CRON cron_rstudioaddin() ############################
+
+descargarObservacionesConvencionales  <- function() {
+  
   
   # Para cada una de las estaciones con las que trabaja nuestro sistema, realizamos una consulta de observaciones convencional
   
@@ -138,3 +141,6 @@ observacion_convencional <- function(base, observacion_convencional, api_key, id
   obs_convencional_df
   
 }
+
+
+descargarObservacionesConvencionales ()

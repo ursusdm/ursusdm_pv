@@ -29,7 +29,8 @@ shinyUI(dashboardPage(
             menuItem("Dashboard", tabName = "dashboard", icon = icon("dashboard"), badgeLabel = "Panel principal", badgeColor = "blue"),
             menuItem("¿Qué es URSUS PV?", tabName = "def", icon = icon("question")),
             menuItem("Cómo funciona?", tabName = "info", icon = icon("info")),
-            menuItem("Áreas", tabName = "areas", icon = icon("home"))
+            menuItem("Predicción media diaria", tabName = "areas", icon = icon("solar-panel")),
+            menuItem("Predicción a un día vista", tabName = "areas2", icon = icon("solar-panel"))
         )
         
     ),
@@ -56,7 +57,7 @@ shinyUI(dashboardPage(
                             
                             
                             box(
-                                title = tagList(shiny::icon("chart-area"), "Plot Area"),
+                                title = tagList(shiny::icon("chart-area"), "Tejados disponibles en el área de interés"),
                                 status = "primary",
                                 solidHeader = TRUE,
                                 plotOutput("graficPlot")
@@ -91,7 +92,9 @@ shinyUI(dashboardPage(
                                 
                                 actionButton("showSlopes2", "Mostrar pendientes"),
                                 
-                                plotOutput("graficPlot2")
+                                plotOutput("graficPlot2"),
+                                
+                                plotOutput("graficPlot9")
                                 
                             ),
                             
@@ -108,7 +111,7 @@ shinyUI(dashboardPage(
                                                 "Oeste")
                                 ),
                                 
-                                actionButton("showOrientation", "Mostrar orientación"),
+                                actionButton("showOrientation", "Mostrar orientaciones"),
                                 
                                 #Para el concurso
                                 p(),
@@ -122,9 +125,11 @@ shinyUI(dashboardPage(
                                 ),
                                 
                                
-                                actionButton("showOrientation2", "Mostrar orientación"),
+                                actionButton("showOrientation2", "Mostrar orientaciones"),
                                 
-                                plotOutput("graficPlot4")
+                                plotOutput("graficPlot4"),
+                                
+                                plotOutput("graficPlot10")
                                 
                             )
                             
@@ -146,13 +151,14 @@ shinyUI(dashboardPage(
                     tags$ol(
                         tags$li(style="color:#5886C0","Seleccione el área de interés"), 
                         tags$ol(
-                            tags$li(tags$span("De forma gráfica.",style="color:#58B2C0")," Navegue por el mapa del dashboard con el ratón y las herramientas de zoom hasta el área de interés. A continuación, seleccione la herramienta rectángulo, haga click izquierdo con el ratón sobre un punto de la zona de interés, trace un rectángulo sin soltar el botón, y suelte el botón del ratón cuando esté satisfecho con el área dibujada. Si desea eliminar el área trazada, utilice la herramienta gráfica eliminar, haga click en el polígono anteriormente trazado a eliminar, y presione el botón 'Save'. "), 
-                            tags$li(tags$span("De forma manual.",style="color:#58B2C0")," Introduzca las 4 coordenadas que delimitan el área de estudio de interés desde el control del menú lateral 'Insertar coordenadas manualmente'."), 
-                            
+                            tags$li(tags$span("De forma gráfica.",style="color:#58B2C0")," Navegue por el mapa del dashboard con el ratón y las herramientas de zoom hasta el área de interés. A continuación, seleccione la herramienta rectángulo, haga click izquierdo con el ratón sobre un punto de la zona de interés, trace un rectángulo sin soltar el botón, y suelte el botón del ratón cuando esté satisfecho con el área dibujada. Si desea eliminar el área trazada, utilice la herramienta gráfica eliminar, haga click en el polígono anteriormente trazado a eliminar, y presione el botón 'Save'. ") 
+                          
                         ),
-                        tags$li(style="color:#5886C0","Mostrar Tejados.", tags$span("Presione el botón 'Mostrar tejados' y se mostrarán en el área gráfica (Plot área) del dashboard los tejados disponibles susceptibles de instalaciones fotovoltaicas en el área de interés. Se activarán los controles de pendientes y orientciones de los tejados disponibles.",style="color:black")), 
-                        tags$li(style="color:#5886C0","Mostrar Orientación.", tags$span("Seleccione los tipos de orientacion de los tejados en los que tiene interés para instalar placas fotovoltaicas. A continuación, presione el botón 'Mostrar Orientación', y la aplicación le mostrará en el área gráfica (plot area) las orientaciones en las que está interesado de cada parte de cada tejado del área de interés. En el área de control de orientaciones, se mostrará una gráfica con la orientación en grados.",style="color:black")), 
-                        tags$li(style="color:#5886C0","Mostrar Pendientes.", tags$span("Seleccione el tipo de inclinación de los tejados en los que tiene interés para instalar placas fotovoltaicas. A continuación, presione el botón 'Mostrar Pendientes', y la aplicación le mostrará en el área gráfica (plot area), los tipos de inclinación en los que está interesado de cada parte de cada tejado del área de interés. En el área de control de pendientes, se mostrará una gráfica con la pendiente en grados",style="color:black")), 
+                        tags$li(style="color:#5886C0","Mostrar Tejados.", tags$span("Presione el botón 'Mostrar tejados' y se mostrarán en el área gráfica de arriba a la derecha del dashboard los tejados disponibles susceptibles de instalaciones fotovoltaicas en el área de interés. Se activarán los controles de pendientes y orientciones de los tejados disponibles.",style="color:black")), 
+                        tags$li(style="color:#5886C0","Mostrar Orientación.", tags$span("Seleccione las orientaciones de interés de los tejados. A continuación, presione el botón 'Mostrar Orientación', y la aplicación le mostrará en las áreas gráficas del control de orientaciones, las orientaciones de todos los tejados y las orientaciones de los tejados en las que tiene interés.",style="color:black")), 
+                        tags$li(style="color:#5886C0","Mostrar Pendientes.", tags$span("Seleccione lads inclinaciones de interes de los tejados. A continuación, presione el botón 'Mostrar Pendientes', y la aplicación le mostrará en las áreas gráficas del control de pendientes, las pendientes de todos los tejados y las pendientes de los tejados en las que está interesado",style="color:black")), 
+                        tags$li(style="color:#5886C0","Estimación de energía a un día vista (c/p).", tags$span("Acceda a la pestaña de estimaciones de energía  a un día vista dashboard. Presione el botón 'Estimación de energía  a un día vista'. (sólo se tendrán en cuenta los tejados que cumplan las condiciones de orientación y pendiente establecidos por el usuario). Aparecerá en un panel informativo el número de tejados que cumplen las condiciones mínimas (área mínima de instalación, orientaciones válidas, ...) y la producción total estimada a un día vista para el área de interés. También podrá navegar por las pestañas (tejados disponibles y características de los tejados) en las que podrá acceder a las características de los tejados procesados (producción del tejado, área, inclinación, ...) y a un panel visual dónde podrá ver los tejados.  ",style="color:black")), 
+                        tags$li(style="color:#5886C0","Estimación de energía media diaria (l/p).", tags$span("Acceda a la pestaña de estimaciones de energía media diaria del dashboard. Presione el botón 'Estimación de energía media diaria'. (sólo se tendrán en cuenta los tejados que cumplan las condiciones de orientación y pendiente establecidos por el usuario). Aparecerá en un panel informativo el número de tejados que cumplen las condiciones mínimas (área mínima de instalación, orientaciones válidas, ...) y la producción total estimada media diaria para el área de interés. También podrá navegar por las pestañas (tejados disponibles y características de los tejados) en las que podrá acceder a las características de los tejados procesados (producción del tejado, área, inclinación, ...) y a un panel visual dónde podrá ver los tejados.  ",style="color:black")) 
                         
                     )
                     
@@ -161,26 +167,26 @@ shinyUI(dashboardPage(
             # Second tab content
             tabItem(tabName = "def",
                     h2("¿Qué es URSUS PV?"),
-                    p(tags$em("URSUS PV")," es una herramienta para la ayuda a la toma de decisiones en cuanto a la ubicación óptima de instalaciones fotovoltaicas en tejados urbanos. La herramienta tomará como entrada un área de interés de forma manual o gráfica y mostrará al usuario los tejados disponibles. Permitirá el filtro de tejados en los que se tiene interés para las instalaciones de placas fotovoltaicas en cuanto a orientación (Norte,Este, Sur y Oeste) y en cuanto a inclinación (Tejados planos, ligeramente inclinados, inclinados o muy inclinados) y realizará predicciones de energía solar basándose en las áreas de los tejados que cumplan con las condiciones de filtrado.")
+                    p(tags$em("URSUS PV")," es una herramienta para la ayuda a la toma de decisiones en cuanto a las posibles ubicaciones óptimas de instalaciones fotovoltaicas en áreas de interés urbana. La herramienta tomará como entrada un área de interés de gráfica y mostrará al usuario los tejados disponibles. Permitirá el filtro de tejados en los que se tiene interés para las instalaciones de placas fotovoltaicas en cuanto a orientación e inclinación, y realizará predicciones de energía solar a un día vista y media diaria si se instalaran placas fotovoltaicas.")
             ),
             
             # Second tab content
             tabItem(tabName = "areas",
-                    h2("Control de Áreas"),
+                    h2("Predicciones de energía solar media diaria"),
                     fluidRow( class = "text-center",
                               
                               
                               tabBox(
-                                  title = tagList(shiny::icon("home"), "Roof Areas Control"),
+                                  title = tagList(shiny::icon("home"), "Energía solar media diaria"),
                                   
                                   # The id lets us use input$tabset1 on the server to find the current tab
                                   id = "tabset1", height = "250px",
                                   
                                   #app normal / concurso
-                                  tabPanel("Plot Tejados", actionButton("showArea", "Mostrar áreas y producción"), actionButton("showArea2", "Mostrar áreas y producción"), plotOutput("graficPlot5") ),
+                                  tabPanel("Tejados disponibles", actionButton("showArea", "Estimar energía solar media diaria"), actionButton("showArea2", "Estimar energía solar media diaria"), plotOutput("graficPlot6") ),
                                  
-                                  tabPanel("Plot Areas", plotOutput("graficPlot6") ),
-                                  tabPanel("Dataset Areas",  DT::dataTableOutput("areatable"))
+                                  #tabPanel("Plot Areas", plotOutput("graficPlot6") ),
+                                  tabPanel("Características y producción de los tejados disponibles",  DT::dataTableOutput("areatable"))
                                   
                               ),
                               
@@ -188,6 +194,34 @@ shinyUI(dashboardPage(
                               
                               infoBoxOutput("totalRoofAreaBox"),
                               infoBoxOutput ("totalEnergyAreaBox")
+                              
+                    ),
+            ),
+            
+            # Second tab content
+            tabItem(tabName = "areas2",
+                    h2("Predicciones de energía solar a un día vista"),
+                    fluidRow( class = "text-center",
+                              
+                              
+                              tabBox(
+                                title = tagList(shiny::icon("home"), "Energía solar a un día vista"),
+                                
+                                # The id lets us use input$tabset1 on the server to find the current tab
+                                id = "tabset1", height = "250px",
+                                
+                                #app normal / concurso
+                                tabPanel("Tejados disponibles", actionButton("showArea4", "Estimar energía solar a un día vista"), plotOutput("graficPlot20") ),
+                                
+                                #tabPanel("Plot Areas", plotOutput("graficPlot6") ),
+                                tabPanel("Características y producción de los tejados disponibles",  DT::dataTableOutput("areatable2"))
+                                
+                              ),
+                              
+                              
+                              
+                              infoBoxOutput("totalRoofAreaBox2"),
+                              infoBoxOutput ("totalEnergyAreaBox2")
                               
                     ),
             )

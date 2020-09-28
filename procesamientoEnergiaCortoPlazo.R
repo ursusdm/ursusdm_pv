@@ -1,4 +1,5 @@
 
+###########Script que se utilizará para obtener la energía a corto plazo para el día siguiente de cada tejado ##############
 
 ################################################################## Libraries #########################################################################
 
@@ -13,22 +14,19 @@ library(Rcpp)
 library(kableExtra)
 library(lubridate)
 
-
 ##Add funciones_prod_fv.R para los cálculos de energía solar a corto plazo
 
 source("funciones_prod_fv.R")
 
 
+############### Obtiene dataframes con las estaciones y municipios a partir de los CSVS del AEMET prev. descargados ###############################
 
-
-############### Abrir con las estaciones y municipios ##########################################
-
-estaciones <- as.data.frame(read_csv("estaciones_meteorologicas.csv"))
-municipios <- as.data.frame(read_csv("municipios.csv"))
-estaciones_rad <- as.data.frame(read_csv("estaciones_radiacion.csv"))
+estaciones <- read_csv("estaciones_meteorologicas.csv")
+municipios <- read_csv("municipios.csv")
+estaciones_rad <- read.csv("estaciones_radiacion.csv",stringsAsFactors=FALSE, fileEncoding="latin1")
 
 ########################## Función que calcula la distancia euclidea o de Manhattan entre dos puntos #################################################
-###### Nos servirá para conocer la estación más cercana a cada tejado que se esté procesando
+############## Nos servirá para conocer la estación o municipio más cercana/o a cada tejado que se esté procesando ###################################
 
 distancia <- function(lat1, lon1, lat2, lon2, distancia = "euclidea"){
   
@@ -58,65 +56,23 @@ gh_diaria <- function(E0, ws, decl, lat){
   gh <- 24/pi * k_solar * E0 * (ws* sin(decl) * sin(lat) + cos(decl) * cos(lat) * sin(ws))
 }
 
+######################## Función que transforma las observaciones del estado del cielo a valor numérico ##############
 
-
-
-
-########## Script que obtiene las estaciones que ofrecen datos de radiación y genera un csv en "estaciones_radiacion.csv" ########################## 
-
-radiacion_url <- "red/especial/radiacion"
-
-get_radiacion <- get_response(url_base, radiacion_url, api_key)
-
-radiacion_text <- content(get_radiacion, "text")
-
-datos_rad <- substring(radiacion_text, 32)
-
-csv_rad <- read_delim(datos_rad, delim =  ";")
-
-malaga <- which(csv_rad$Estación == "Málaga")
-
-csv_rad$Indicativo[malaga] <- paste0(csv_rad$Indicativo[malaga], "X")
-
-estaciones_radiacion <- csv_rad %>% 
-  select(Estación, indicativo = Indicativo) %>%
-  left_join(datos_estaciones_df, by = "indicativo")
-
-# Datos completados con:
-# http://www.aemet.es/es/eltiempo/observacion/radiacion/ozono?l=zaragoza&f=ozono
-# http://www.aemet.es/es/eltiempo/observacion/radiacion/radiacion?l=maspalomas
-# http://www.aemet.es/es/eltiempo/observacion/radiacion/radiacion?l=badajoz
-
-zaragoza <- which(estaciones_radiacion$Estación == "Zaragoza")
-maspalomas <- which(estaciones_radiacion$Estación == "Maspalomas")
-badajoz <- which(estaciones_radiacion$Estación == "Badajoz")
-
-columnas_na <- c(zaragoza, maspalomas, badajoz)
-
-estaciones_radiacion$altitud[columnas_na] <- c( 258, 45, 175 )
-estaciones_radiacion$latitud[columnas_na] <- c("413800N", "274529N", "385360N")
-
-estaciones_radiacion$grados_lat[columnas_na] <- c(41, 27, 38)
-estaciones_radiacion$minutos_lat[columnas_na] <- c(38, 45, 53)
-estaciones_radiacion$segundos_lat[columnas_na] <- c(00, 29, 60)
-estaciones_radiacion$orient_lat[columnas_na] <- c("N", "N", "N")
-estaciones_radiacion$latitud_dec[columnas_na] <- c(latitud_longitud_decimal(41, 38, 00),
-                                                   latitud_longitud_decimal(27, 45, 53),
-                                                   latitud_longitud_decimal(38, 53, 60))
-
-estaciones_radiacion$longitud[columnas_na] <- c("005256W", "153432W", "070046W")
-
-estaciones_radiacion$grados_lon[columnas_na] <- c(00, 15, 07)
-estaciones_radiacion$minutos_lon[columnas_na] <- c(52, 34, 00)
-estaciones_radiacion$segundos_lon[columnas_na] <- c(56, 32, 46)
-estaciones_radiacion$orient_lon[columnas_na] <- c("W", "W", "W")
-estaciones_radiacion$longitud_dec[columnas_na] <- c(-latitud_longitud_decimal(00, 52, 56),
-                                                    -latitud_longitud_decimal(15, 34 ,32),
-                                                    -latitud_longitud_decimal(07, 00, 46))
-
-
-write.csv(estaciones_radiacion, "estaciones_radiacion.csv")
-
+sustitucion <- function(df){
+  
+  descripcion <- c("Despejado", "Poco nuboso", "Intervalos nubosos", "Nuboso", "Muy nuboso", "Cubierto", "Nubes altas", "Intervalos nubosos con lluvia", "Nuboso con lluvia", "Muy nuboso con lluvia", "Cubierto con lluvia", "Intervalos nubosos con nieve", "Nuboso con nieve", "Muy nuboso con nieve",  "Cubierto con nieve", "Chubascos", "Tormenta", "Granizo", "Bruma", "Niebla", "Calma", "Intervalos nubosos con lluvia escasa", "Muy nuboso con lluvia escasa",  "Nuboso con lluvia escasa", "Cubierto con lluvia escasa")
+  
+  valor <- c(1, 0.8, 0.7, 0.6, 0.4, 0.2, 0.8, 0.6, 0.4, 0.2, 0.2, 0.6, 0.4, 0.2, 0.2, 0.4, 0.2, 0.4, 0.5, 0.4, 0.8, 0.65, 0.25, 0.45, 0.25)
+  
+  for (d in 1:length(descripcion)){
+    
+    df$estadoCielo.descripcion[which(df$estadoCielo.descripcion == descripcion[d])] <- valor[d]
+    
+  }
+  
+  df
+  
+}
 
 ####################################### Consulta de observación convecional de un día completo ############## 
 
@@ -135,7 +91,6 @@ observacion_conv_df <- function(id_estacion, fecha, hora1, hora2) {
   
   # Se abre el csv de observaciones convencionales de la estación más cercana al CSV de la 1ª hora programada de descarga
   obs_conv_hora1_df <-  read_csv(file = paste ( "aemet/",obs_conv_hora1))
-  
   obs_conv_hora2 <- paste("observacion_convencional","id", id_estacion, fecha, hora2, sep = "_")
   obs_conv_hora2 <- paste0(obs_conv_hora2,".csv")
   
@@ -173,12 +128,14 @@ observacion_conv_df <- function(id_estacion, fecha, hora1, hora2) {
 rglobal_df <- function(id_estacion, ayer) {
   
   rad <- paste("radiacion_solar", ayer, sep = "_")
-  rad <- paste0("AEMET/", rad, ".csv")
   
-  rad_df <- read_csv(file = paste ( "aemet/",rad))
+  rad <- paste0(rad,".csv")
   
-  
-  rad_df <- rad_df %>% filter(Indicativo == id_estacion)
+  rad_df <- read_csv(file = paste ("aemet/",rad) )
+
+
+  rad_df <- rad_df %>%
+    filter(Indicativo == id_estacion)
   
   horas <- c("Tipo", as.character(5:20), "SUMA")
   rad_gl <- rad_df %>% select(all_of(horas))
@@ -195,7 +152,7 @@ rglobal_df <- function(id_estacion, ayer) {
 
 prediccion_horas_df <- function(id_municipio, fecha, hora) {
   
-  ## fecha, hora. Valores correspondientes a la fecha y hora de descarga automática del script. 
+  ## fecha, hora. Valores correspondientes a la fecha (hoy) y hora de descarga automática del script.  (10)
   ## id_municipio id del municipio del que se quieren conocer las predicciones para el día siguiente
   
   pred_horas <- paste("prediccion_horaria","id", id_municipio, fecha, hora, sep = "_")
@@ -207,7 +164,14 @@ prediccion_horas_df <- function(id_municipio, fecha, hora) {
     select(starts_with("estadoCielo"), 
            starts_with("temperatura."), 
            starts_with("humedadRelativa."),
+           fecha,
            starts_with("viento."))
+  
+  #Filtramos las predicciones que se elaboraron ayer para el día de hoy
+  hoy <-  as.character(Sys.Date())
+  
+  pred_horas_df <- pred_horas_df%>%
+    filter(fecha == as.Date(hoy))
   
   pred_horas_df
   
@@ -222,16 +186,25 @@ calcularEnergiaDiaSiguiente <- function (lat, lon, orient, incl, area) {
   #Obtener municipio y estación convencional y de radiación más cercana
   
   municipios2 <- municipios %>%                
-    mutate(distancia = distancia(latitud_dec, longitud_dec, lat, lon, distancia = "manhattan")) %>%
+    mutate(distancia = distancia(latitud_dec, longitud_dec, lat, lon)) %>%
     filter(distancia == min(distancia))
+  
+  print ("mun2")
+  print (municipios2)
   
   estaciones2 <- estaciones %>% 
     mutate(distancia = distancia(latitud_dec, longitud_dec, lat, lon)) %>%
     filter(distancia == min(distancia))
   
+  print ("estaciones2")
+  print (estaciones2)
+  
   estaciones_rad2 <- estaciones_rad %>%  
     mutate(distancia = distancia(latitud_dec, longitud_dec, lat, lon)) %>% 
     filter(distancia == min(distancia))
+  
+  print ("estaciones_rad2")
+  print (estaciones_rad2)
   
   ## Accedemos a las observaciones de los CSVS del aemet (observaciones convencionales, predicciones y observaciones de radiacion)
   
@@ -240,6 +213,9 @@ calcularEnergiaDiaSiguiente <- function (lat, lon, orient, incl, area) {
   ## Obtenemos un dataframe los datos del csv de observaciones diarias (fusionamos el que se descarga a las 10:00 con el que se descarga a las 00:00)
   
   df_observacion <- observacion_conv_df(id_estacion = estaciones2$indicativo, fecha = hoy, hora1 = "00h", hora2 = "10h")
+  
+  print ("df_observacion")
+  print (df_observacion)
   
   #Preparamos un dataframe
   
@@ -250,8 +226,7 @@ calcularEnergiaDiaSiguiente <- function (lat, lon, orient, incl, area) {
     select(ta) %>% 
     summarise(t_9_12_diaprevio = mean(ta, na.rm = T))%>%
     unlist()
-  
-  
+
   t_13_15_diaprevio <- df_observacion %>%
     filter(hora %in% c(13:15))%>%
     select(ta) %>% 
@@ -273,12 +248,11 @@ calcularEnergiaDiaSiguiente <- function (lat, lon, orient, incl, area) {
   precipitac_dia_previo <- mean(df_observacion$prec)
   
   humedad_diaria <- mean(df_observacion$hr) / 100
-  
-  
+ 
   ## Obtenemos un dataframe del csv de predicciones para el municipio más cercano al tejado y obtenemos los valores necesarios a partir del dataframe
-  
-  
+
   df_prediccion_horaria <- prediccion_horas_df(id_municipio = municipios2$id, hoy, "10h")
+  
   df_prediccion_horaria$temperatura.periodo <- as.numeric(df_prediccion_horaria$temperatura.periodo)
   
   Predicc_temp_day_C <- mean(df_prediccion_horaria$temperatura.value)
@@ -294,7 +268,7 @@ calcularEnergiaDiaSiguiente <- function (lat, lon, orient, incl, area) {
   Predicc_temp_13_14_15_C <- df_prediccion_horaria %>%
     filter(temperatura.periodo %in% c(13:15))%>%
     select(temperatura.value) %>% 
-    summarise(Predicc_temp_10_11_12_C = mean(temperatura.value, na.rm = T))%>%
+    summarise(Predicc_temp_13_14_15_C = mean(temperatura.value, na.rm = T))%>%
     unlist()
   
   Predicc_R_hum_10_11_12 <- df_prediccion_horaria %>%
@@ -309,10 +283,26 @@ calcularEnergiaDiaSiguiente <- function (lat, lon, orient, incl, area) {
     summarise(Predicc_R_hum_13_14_15 = mean(humedadRelativa.value, na.rm = T))%>%
     unlist() / 100
   
-  Predicc_cloudy_sky_day_0_1 <- NA
+  df_valores_cielo <- sustitucion(df_prediccion_horaria)
+
+  Predicc_cloudy_13_14_15 <- df_valores_cielo %>%
+    filter(estadoCielo.periodo %in% c(13:15))%>%
+    select(estadoCielo.descripcion) %>% 
+    summarise(Predicc_cloudy_13_14_15 = mean(as.numeric(estadoCielo.descripcion), na.rm = T))%>%
+    unlist() 
   
-  Predicc_cloudy_10_11_12 <- NA
-  Predicc_cloudy_13_14_15 <- NA
+  
+  Predicc_cloudy_sky_day_0_1 <- df_valores_cielo %>%
+    summarise(Predicc_cloudy_sky_day_0_1 = mean(as.numeric(estadoCielo.descripcion), na.rm = T))%>%
+    unlist() 
+  
+  Predicc_cloudy_10_11_12 <- df_valores_cielo %>%
+    filter(estadoCielo.periodo %in% c(10:12))%>%
+    select(estadoCielo.descripcion) %>% 
+    summarise(Predicc_cloudy_10_11_12 = mean(as.numeric(estadoCielo.descripcion), na.rm = T))%>%
+    unlist() 
+  
+
   
   Predicc_temperatura_horaria <- df_prediccion_horaria$temperatura.value
   
@@ -324,61 +314,160 @@ calcularEnergiaDiaSiguiente <- function (lat, lon, orient, incl, area) {
   
   df_r_global <- rglobal_df(estaciones_rad2$indicativo, ayer)
   
+  #para Málaga
+  #df_r_global <- rglobal_df("6156X", ayer)
+  
+  #Nos quedamos con la radiación total global del día anterior
   gd_previo <- df_r_global %>% 
     select(SUMA) %>% 
     unlist() 
   
-  # Radiación extraterrestre Gh----------------
+  #Valores horarios de radiacion global del día anterior
+  gh_previo  <- df_r_global %>% 
+    select(-SUMA,-Tipo) 
   
-  # Calculamos la radiación incidente  para la lat, lng, orient, iclinacion del tejado que se está procesando
+  #dia y mes actual
+  actualDay <- day (as.character(Sys.Date()))
+  actualMonth <- month (as.character(Sys.Date()))
+  
+  # Calculamos el dataframe con la información de radiación (excentricidad, wsr, ...)  para la lat, lng, orient, iclinacion del tejado que se está procesando
   
   df_solar_energy <- df_energia_solar (lat, lon, orient, incl, area) 
   
-  #mes, dia del que se quiera extraer la declinacion_solar, excentricidad_diaria, w_sr (entiendo que del siguiente que es cuando se quiera predecir)
+  #Nos quedamos con los datos de radiación para hoy
+  calculos_dia <- df_solar_energy%>%filter(mes==actualMonth, dia == actualDay)
   
-  nextDay <- day (as.character(Sys.Date()+1))
-  nextDayMonth <- month (as.character(Sys.Date()+1))
+  acimut_h_dia <- paste("Acimut", as.character(4:19), as.character(5:20), sep = "_")
+  altura_h_dia <- paste("Altura", as.character(4:19), as.character(5:20), sep = "_")
+  angulo_h_dia <- paste("W", as.character(4:19), as.character(5:20), sep = "_")
   
-  gh_datos <- df_solar_energy %>%
-    filter(mes == nextDayMonth, dia == nextDay) %>%
-    select(declinacion_solar, excentricidad_diaria, w_sr)
+  
+  dia_Acimut_h <- calculos_dia[1, acimut_h_dia]
+  dia_Altura_h <- calculos_dia[1, altura_h_dia]
+  dia_Angulo_h <- calculos_dia[1, angulo_h_dia]
+  dia_declinacion <- calculos_dia$declinacion_solar[1]
+  
+  inclinacion <- incl * pi/180
+  orientacion <- orient * pi/180
+  lat <- lat * pi/180
+  
+  dia_Gh <- gh_previo
+  
+
   
   # Radiación extraterrestre Gh----------------
   
-  gh <- gh_diaria(E0 = gh_datos$excentricidad_diaria,
+  #Para el mes, dia actual, extraemos la declinacion_solar, excentricidad_diaria, w_sr (es decir dia y mes de hoy ya que la prediccion es para un dia a vista)
+  
+  gh_datos <- df_solar_energy %>%
+    filter(mes == actualMonth, dia == actualDay) %>%
+    select(declinacion_solar, excentricidad_diaria, w_sr)
+  
+  # Radiación extraterrestre diaria Gd0----------------
+  
+  gd0 <- gh_diaria(E0 = gh_datos$excentricidad_diaria,
                   ws = gh_datos$w_sr,
                   decl = gh_datos$declinacion_solar,
                   lat = lat)
   
-  k_d_previo <- gd_previo/ gh #indice de transparencia (Kd) calculado
+  k_d_previo <- gd_previo/ gd0 #indice de transparencia (Kd) calculado
   
   # Componemos la observación con la que trabajará el sistema predictor
   
   observacion <- data.frame(gd_previo = gd_previo,
-                            k_d_previo = k_d_previo,
-                            t_9_12_diaprevio,
-                            t_13_15_diaprevio,
+                            kd_previo = k_d_previo,
+                            t9_12_diaprevio = t_9_12_diaprevio,
+                            t13_15_diaprevio = t_13_15_diaprevio,
                             h8_diaprevio,
                             h14_diaprevio,
-                            t_dia_previo,
-                            precipitac_dia_previo,
-                            Predicc_temp_day_C,
-                            Predicc_Relative_humidity_day_0_1,
-                            Predicc_cloudy_sky_day_0_1,
-                            Predicc_temp_10_11_12_C,
-                            Predicc_cloudy_13_14_15,
-                            Predicc_R_hum_10_11_12,
-                            Predicc_R_hum_13_14_15,
-                            Predicc_cloudy_10_11_12,
-                            Predicc_cloudy_13_14_15)
+                            t_dia_diaprevio = t_dia_previo,
+                            preciptac_dia_diaprevio = precipitac_dia_previo,
+                            Predicc_temp_day_C = Predicc_temp_day_C,
+                            Predicc_Relative_humidity_day_0_1 = Predicc_Relative_humidity_day_0_1,
+                            Predicc_cloudy_sky_day_0_1 =  Predicc_cloudy_sky_day_0_1,
+                            Predicc_temp_10_11_12_C = Predicc_temp_10_11_12_C,
+                            Predicc_cloudy_13_14_15 = Predicc_cloudy_13_14_15,
+                            Predicc_R_hum_10_11_12 = Predicc_R_hum_10_11_12,
+                            Predicc_R_hum_13_14_15 = Predicc_R_hum_13_14_15,
+                            Predicc_temp_13_14_15_C = Predicc_temp_13_14_15_C,
+                            Predicc_cloudy_10_11_12 = Predicc_cloudy_10_11_12)
+  
+  # Almacenamos el dataframe observationa en el servidor
+  
+  nombre_csv <- paste0("observations",".csv")
+  write.csv(observacion, file = paste ( "aemet/",nombre_csv), row.names = FALSE)
+  
+  # Use system for prediction
+  uri <- "SystemForPredictions/10_PREDICTION_SYSTEM.R"
+  
+  # Se generará un CSV con las predicciones hechas por el modelo
+  source(uri)
+  
+  #Abrimos elcsv generado por el sistema predictor para tomar los valores de transparencia horaria predicha para hoy
+  
+  obs_predichas <- read_csv(file = paste ( "aemet/","observations+kh_prediction.csv"))
+  
+
+
+  dia_Kh <- obs_predichas%>%
+    select(kh9,kh10,kh11,kh12,kh13,kh14,kh15,kh16)
+  
+  kh5 <- dia_Kh$kh9
+  kh6 <- dia_Kh$kh9
+  kh7 <- dia_Kh$kh9
+  kh8 <- dia_Kh$kh9
+  
+  kh17<- dia_Kh$kh16
+  kh18<- dia_Kh$kh16
+  kh19<- dia_Kh$kh16
+  kh20<- dia_Kh$kh16
+ 
+
+  kh_array <- cbind(kh8,dia_Kh)
+  kh_array <- cbind(kh7,kh_array)
+  kh_array <- cbind(kh6,kh_array)
+  kh_array <- cbind(kh5,kh_array)
+  
+  kh_array <- cbind(kh_array,kh17)
+  kh_array <- cbind(kh_array,kh18)
+  kh_array <- cbind(kh_array,kh19)
+  kh_array <- cbind(kh_array,kh20)
+
   
   
-  #Faltarían los datos de radiación para el cálculo de energía fotovoltaica
+#Obtener dataframe de radiación para el día actual 
   
-  prod_fv <- data.frame(Predicc_temperatura_horaria,
-                        Predicc_vviento_horario)
+    df_radiacion_horaria <- calculo_radiacion_horaria(as.data.frame(dia_Gh) ,
+                                                      kh_array, 
+                                                      dia_Acimut_h, 
+                                                      dia_Altura_h, 
+                                                      dia_Angulo_h,
+                                                      dia_declinacion,
+                                                      lat,
+                                                      inclinacion,
+                                                      orientacion)
+    
+
+
+  ###########preparar DF de radiación horaria necesario para la estimación de la energía a corto plazo ##############
   
+  #Componer el df para el cálculo de la energía a 1 día vista
   
+  #prod_fv <- data.frame(Predicc_temperatura_horaria,
+                        #Predicc_vviento_horario, df_radiacion_horaria  )
+    
+    #Calcular la energía
+    
+    potencia_dia_h <- potencia_generada(t_ambiente = Predicc_temperatura_horaria, 
+                                        irr_solar = df_radiacion_horaria$r_global_h, 
+                                        v_viento = Predicc_vviento_horario)
+    
+    potencia_silicio_dia_h <- potencia_paneles_silicio(area = area, 
+                                                       potencia = potencia_dia_h)
+
+
+    as.data.frame(potencia_silicio_dia_h)
+
 }
   
 #################################################################################################
