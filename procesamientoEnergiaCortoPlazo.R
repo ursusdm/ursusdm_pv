@@ -374,7 +374,7 @@ calcularEnergiaDiaSiguiente <- function (lat, lon, orient, incl, area) {
   
   # Componemos la observación con la que trabajará el sistema predictor
   
-  observacion <- data.frame(gd_previo = gd_previo,
+  observacionAPredecir <<- data.frame(gd_previo = gd_previo,
                             kd_previo = k_d_previo,
                             t9_12_diaprevio = t_9_12_diaprevio,
                             t13_15_diaprevio = t_13_15_diaprevio,
@@ -394,8 +394,8 @@ calcularEnergiaDiaSiguiente <- function (lat, lon, orient, incl, area) {
   
   # Almacenamos el dataframe observationa en el servidor
   
-  nombre_csv <- paste0("observations",".csv")
-  write.csv(observacion, file = paste ( "aemet/",nombre_csv), row.names = FALSE)
+  #nombre_csv <- paste0("observations",".csv")
+  #write.csv(observacionAPredecir, file = paste ( "aemet/",nombre_csv), row.names = FALSE)
   
   # Use system for prediction
   uri <- "SystemForPredictions/10_PREDICTION_SYSTEM.R"
@@ -405,11 +405,11 @@ calcularEnergiaDiaSiguiente <- function (lat, lon, orient, incl, area) {
   
   #Abrimos elcsv generado por el sistema predictor para tomar los valores de transparencia horaria predicha para hoy
   
-  obs_predichas <- read_csv(file = paste ( "aemet/","observations+kh_prediction.csv"))
+  #obs_predichas <- read_csv(file = paste ( "aemet/","observations+kh_prediction.csv"))
   
 
 
-  dia_Kh <- obs_predichas%>%
+  dia_Kh <- observations_with_kh_prediction%>%
     select(kh9,kh10,kh11,kh12,kh13,kh14,kh15,kh16)
   
   kh5 <- dia_Kh$kh9

@@ -17,12 +17,12 @@ if (!(file.exists(file_regression) &&
   
   description_centroid <- read.csv("SystemForPredictions/centroids_14_types_of_days.csv")
   
-  observations <- read.csv(file = paste ( "aemet/","observations.csv"))
+  #observations <- read.csv(file = paste ( "aemet/","observations.csv"))
   
 
   
   # calculate gdext_previo needed in the regression model
-  observations <- observations %>% 
+  observations <- observacionAPredecir %>% 
                               mutate(gdext_previo = gd_previo/kd_previo)  %>%
                               select(1,gdext_previo,everything())
   
@@ -46,9 +46,9 @@ if (!(file.exists(file_regression) &&
   
   # CREATING FINAL DATASET
   # including new attributes to original observations
-  observations_with_kh_prediction <- cbind(observations,CLUSTER_with_kh_prediction)
+  observations_with_kh_prediction <<- cbind(observations,CLUSTER_with_kh_prediction)
   
-  write.csv(observations_with_kh_prediction, file = paste ( "aemet/","observations+kh_prediction.csv"), row.names = FALSE)
+  #write.csv(observations_with_kh_prediction, file = paste ( "aemet/","observations+kh_prediction.csv"), row.names = FALSE)
 }
 
 

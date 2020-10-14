@@ -5,9 +5,9 @@ account: ursusdm
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 2597455
-bundleId: 3430219
+bundleId: 3686679
 url: https://ursusdm.shinyapps.io/ursusdm_pv/
-when: 1595586066.84508
+when: 1601459601.40741
 asMultiple: FALSE
 asStatic: FALSE
-ignoredFiles: .RData|git.rtf|README.md|screenshot_1.png|screenshot_2.png|screenshot_3.png|screenshot_4.png|screenshot_5.png|screenshot_6.png|screenshot_7.png|shiny-cheatsheet.pdf|shinyapps.io.rtf|ursus_logo.jpg|www/.DS_Store|www/images/.DS_Store|www/images/disc.png|www/images/roof_class.png
+ignoredFiles: .RData|API_AEMET.Rmd|automat_obs_radiacion.log|energia_corto_plazo.rtf|esquema_integraciones.png|git.rtf|README.md|screenshot_1.png|screenshot_2.png|screenshot_3.png|screenshot_4.png|screenshot_5.png|screenshot_6.png|screenshot_7.png|shiny-cheatsheet.pdf|shinyapps.io.rtf|ursus_logo.jpg|www/.DS_Store|www/images/.DS_Store|www/images/disc.png|www/images/roof_class.png

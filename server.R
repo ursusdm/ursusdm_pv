@@ -35,6 +35,36 @@ source("funciones_prod_fv.R")
 #Add script para la predicción de energía a corto plazo
 source("procesamientoEnergiaCortoPlazo.R")
 
+#Autonatizamos la descarga diaria automática de datos del AEMET
+
+
+automatizacionScripts <- function () {
+  
+  #observaciones
+  automatizarDescargaObservacionesConvencionales <- "automat_obs_radiacion.R"
+  cmd <- cron_rscript(automatizarDescargaObservacionesConvencionales)
+  cron_add(command = cmd, frequency = 'daily', at = '00:00', 
+           id = 'outomat_observ_00h', description = 'Automatización de descarga de observaciones a las 00:00')
+  cron_add(command = cmd, frequency = 'daily', at = '10:00', 
+           id = 'outomat_observ_10h', description = 'Automatización de descarga de observaciones a las 10:00')
+  
+  #predicciones
+  automatizarDescargaPredicciones <- "automat_pred_horarias.R"
+  cmd <- cron_rscript(automatizarDescargaPredicciones)
+  cron_add(command = cmd, frequency = 'daily', at = '10:00', 
+           id = 'outomat_predic_10h', description = 'Automatización de descarga de predicciones a las 10:00')
+  
+  #datos de radiacion
+  automatizarDescargaObservacionesRadiacion<- "automat_obs_radiacion.R"
+  cmd <- cron_rscript(automatizarDescargaObservacionesRadiacion)
+  cron_add(command = cmd, frequency = 'daily', at = '10:00', 
+           id = 'outomat_radiacion_10h', description = 'Automatización de descarga de radiaciones a las 10:00')
+  
+}
+
+
+#automatizacionScripts ()
+
 
 ############################getExtent()#####################################################################
 

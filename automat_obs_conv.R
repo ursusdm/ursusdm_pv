@@ -104,8 +104,6 @@ estaciones <- obtenerEstaciones("MALAGA")
 #estaciones <- rbind (estaciones,estSevilla)
 
 
-
-
 ########################## Se descargará a las 00:00 cada día las observaciones convencionales de cada estación. Se programa con R-CRON cron_rstudioaddin() ############################
 
 descargarObservacionesConvencionales  <- function() {
