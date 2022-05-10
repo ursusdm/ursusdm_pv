@@ -138,11 +138,11 @@ git push
 <!-- CONTACT -->
 ## Contacto
 
-Llanos Mora López  - llanos@lcc.uma.es 
+Llanos Mora López  - llanos@uma.es 
 </br>
-José del Campo Ávila  - jcampo@lcc.uma.es
+José del Campo Ávila  - jcampo@uma.es
 </br>
-Francisco Rodríguez Gómez  - francisco.rdg.gmz@lcc.uma.es
+Francisco Rodríguez Gómez  - francisco.rdg.gmz@uma.es
 
 
 <!-- CONTACT -->
