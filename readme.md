@@ -138,9 +138,12 @@ git push
 <!-- CONTACT -->
 ## Contacto
 
-Llanos Mora López  - email@example.com 
+Llanos Mora López  - llanos@lcc.uma.es 
 </br>
-José del Campo Ávila  - email@example.com
+José del Campo Ávila  - jcampo@lcc.uma.es
+</br>
+Francisco Rodríguez Gómez  - francisco.rdg.gmz@lcc.uma.es
+
 
 <!-- CONTACT -->
 ## Aplicación
@@ -153,7 +156,7 @@ Project Link: [https://ursusdm.shinyapps.io/ursusdm_pv/](https://ursusdm.shinyap
 <!-- ACKNOWLEDGEMENTS -->
 ## Agradecimientos
 
-* Ir rellenando si fuera necesario ...
+* Este trabajo ha sido apoyado por el proyecto RTI2018-095097-BI00 en la convocatoria de Proyectos I+D+i 2018 del Ministerio de Ciencia, Innovación 𝑦 Universidades, España.
 
 [product-screenshot-1]: screenshot_1.png
 [product-screenshot-2]: screenshot_2.png
