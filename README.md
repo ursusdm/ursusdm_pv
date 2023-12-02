@@ -68,11 +68,10 @@ http://ursus-shiny.uma.es/ursusdm_pv/
 <img width="1206" alt="Captura de pantalla 2023-12-02 a las 15 34 25" src="https://github.com/ursusdm/ursusdm_pv/assets/68539118/712bc880-3bc1-429a-acba-4a9e80b34f96">
 
 
-* Select short or longe term
+* Select short or longe term and view the energy predictions results
 
   
-  
-* View the energy predictions results
+<img width="1238" alt="Captura de pantalla 2023-12-02 a las 15 42 52" src="https://github.com/ursusdm/ursusdm_pv/assets/68539118/53379886-b663-495e-ad2a-76fb44b55f44">
 
 
 
@@ -92,12 +91,6 @@ Francisco Rodríguez Gómez  - francisco.rdg.gmz@uma.es
 <!-- ACKNOWLEDGEMENTS -->
 ## ACKNOWLEDGEMENTS
 
-* This work has been apoyado por el proyecto RTI2018-095097-BI00 en la convocatoria de Proyectos I+D+i 2018 del Ministerio de Ciencia, Innovación 𝑦 Universidades, España.
+This project has been supported by the project RTI2018-095097-BI00 in the call for R&D&i Projects 2018 of the Ministry of Science, Innovation and Universities, Spain.
 
-[product-screenshot-1]: screenshot_1.png
-[product-screenshot-2]: screenshot_2.png
-[product-screenshot-3]: screenshot_3.png
-[product-screenshot-4]: screenshot_4.png
-[product-screenshot-5]: screenshot_5.png
-[product-screenshot-6]: screenshot_6.png
-[product-screenshot-7]: screenshot_7.png
+
