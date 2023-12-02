@@ -1,6 +1,6 @@
 
 
-###################################### SCRIPT DE DESCARGA AUTOMÁTICA DE LAS OBSERVACIONES CONVENCIONALES DE LAS ESTACIONES##############################
+###################################### SCRIPT DE DESCARGA AUTOMÁTICA DE LAS OBSERVACIONES CONVENCIONALES DE LAS ESTACIONES METEREOlOGICAS##############################
 
 ### Descargar cada día las 00 y a las 10 de forma automática #########
 
@@ -26,7 +26,12 @@ url_base <- "https://opendata.aemet.es/opendata/api"
 
 observaciones_convencionales_url <- "observacion/convencional/datos/estacion"
 
-estacionesMeteorologicas <- as.data.frame(read_csv("estaciones_meteorologicas.csv"))
+#estacionesMeteorologicas <- as.data.frame(read_csv("/srv/shiny-server/ursus/ursusdm_pv/scriptAEMET/estaciones_meteorologicas.csv"))
+
+################################################################# Función GENÉRICA de consulta a la api #############################################
+#LEER DATASET CON LAS ESTACIONES METEOR.
+estacionesMeteorologicas <- as.data.frame(read_csv("estaciones_meteorologicas.csv",locale=locale(encoding="latin1")))
+#estacionesMeteorologicas <- as.data.frame(read_csv("/srv/shiny-server/ursus/ursusdm_pv/estaciones_meteorologicas.csv",locale=locale(encoding="latin1")))
 
 ################################################################# Función GENÉRICA de consulta a la api #############################################
 
@@ -72,18 +77,6 @@ get_response <- function(url_base, url = "", api_key, id = ""){
 }
 
 
-
-#################### LECTURA DE LOS CSV NECESARIOS ######################
-
-#Importante que ya existan en el servidor dichos ficheros (descargar sólo una vez con el script de descarga)
-
-
-
-
-############### Función para obtener los datos de las estaciones meteorológicas de obs. convencionales de un municipio ####################
-
-## prov provincia
-
 # Se llamará a esta función para cada provincia con la que se trabaje (MALAGA, SEVILLA, ...)
 
 obtenerEstaciones<- function (prov = "MALAGA") {
@@ -97,19 +90,18 @@ estaciones <- obtenerEstaciones("MALAGA")
 
 #Para cada provincia con la que trabaje nuestro sistema, obtenemos las estaciones meteorológicas de observaciones convencionales
 
-
-
 #estSevilla <- obtenerEstaciones("SEVILLA")
+#estMadrid <- obtenerEstaciones("MADRID")
 
 #estaciones <- rbind (estaciones,estSevilla)
+#estaciones <- rbind (estaciones,estMadrid)
 
 
 ########################## Se descargará a las 00:00 cada día las observaciones convencionales de cada estación. Se programa con R-CRON cron_rstudioaddin() ############################
 
 descargarObservacionesConvencionales  <- function() {
   
-  
-  # Para cada una de las estaciones con las que trabaja nuestro sistema, realizamos una consulta de observaciones convencional
+  # Para cada una de las estaciones con las que trabaja nuestro sistema, realizamos una consulta de observaciones convencionales
   
   for (idEst in estaciones$indicativo) {
     observacion_convencional (url_base, observaciones_convencionales_url ,api_key, idEst )
@@ -134,7 +126,8 @@ observacion_convencional <- function(base, observacion_convencional, api_key, id
   
   nombre_csv <- paste("observacion_convencional","id", idema, fecha, hora, sep = "_")
   nombre_csv <- paste0(nombre_csv,".csv")
-  write.csv(obs_convencional_df, file = paste ( "aemet/",nombre_csv), row.names = FALSE)
+  #write.csv(obs_convencional_df, file = paste ( "/srv/shiny-server/ursus/ursusdm_pv/aemet/",nombre_csv), row.names = FALSE)
+  write.csv(obs_convencional_df, file = paste ( "/Users/franciscorodriguezgomez/Documents/Developer/R/URSUS_PV/ursusdm_pv/aemet/",nombre_csv), row.names = FALSE)
   
   obs_convencional_df
   

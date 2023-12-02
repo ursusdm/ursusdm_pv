@@ -27,10 +27,10 @@ observaciones_radiacion_url <- "red/especial/radiacion"
 
 #################### LECTURA DE LOS CSV NECESARIOS ######################
 
-#Importante que ya existan en el servidor dichos ficheros que solo son necesarios descargar una vez
+#estacionesRadiacion <- as.data.frame(read_csv("/srv/shiny-server/ursus/ursusdm_pv/scriptAEMET/estaciones_radiacion.csv",locale=locale(encoding="latin1")))
 
-
-estacionesRadiacion <- as.data.frame(read_csv("estaciones_radiacion.csv"))
+estacionesRadiacion <- as.data.frame(read_csv("estaciones_radiacion.csv",locale=locale(encoding="latin1")))
+#estacionesRadiacion <- as.data.frame(read_csv("/srv/shiny-server/ursus/ursusdm_pv/estaciones_radiacion.csv",locale=locale(encoding="latin1")))
 
 ################################################################# Función GENÉRICA de consulta a la api #############################################
 
@@ -76,9 +76,19 @@ get_response <- function(url_base, url = "", api_key, id = ""){
 }
 
 
+obtenerEstaciones<- function (prov = "MALAGA") {
+  estacionesRadiacion %>% 
+    filter(provincia==prov) 
+  
+}
 
+estaciones <- obtenerEstaciones("MALAGA")
 
+#Para cada provincia con la que trabaje nuestro sistema, obtenemos las estaciones meteorológicas de observaciones convencionales
 
+#estMadrid <- obtenerEstaciones("MADRID")
+
+#estaciones <- rbind (estaciones,estMadrid)
 
 #################################################### SCRIPT ###############################################
 
@@ -87,9 +97,9 @@ get_response <- function(url_base, url = "", api_key, id = ""){
 ### Se programa con R-CRON cron_rstudioaddin() ############################
 
 descargarObservacionesRadiacion <- function() {
-  
+  for (idEst in estaciones$indicativo) {
     radiacion (url_base, observaciones_radiacion_url ,api_key )
-
+  }
 }
 
 ############################### Descarga de datos de radiación solar del día anterior de todas las estaciones ############################ 
@@ -113,7 +123,22 @@ radiacion <- function(base, radiacion, api_key) {
   
   nombre_csv <- paste("radiacion_solar", fecha, sep = "_")
   nombre_csv <- paste0(nombre_csv,".csv")
-  write.csv(csv_rad, file = paste ("aemet/",nombre_csv), row.names = FALSE)
+  #write.csv(csv_rad, file = paste ("/srv/shiny-server/ursus/ursusdm_pv/aemet/",nombre_csv), row.names = FALSE)
+  
+  
+  #view (csv_rad)
+  
+  names(csv_rad) <- gsub("\\..*", "", names(csv_rad))
+  
+  write.csv(csv_rad, file = paste ("/Users/franciscorodriguezgomez/Documents/Developer/R/URSUS_PV/ursusdm_pv/aemet/",nombre_csv), row.names = FALSE)
+  
+  #view (csv_rad)
+  
+  #gsub("\\..*", "", x) 
+  #gsub(".*_", "", a)
+  #names(csv_rad)
+
+  #view (csv_rad)
   
   csv_rad
   

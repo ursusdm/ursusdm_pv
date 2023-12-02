@@ -17,7 +17,7 @@ library(lubridate)
 ##Add funciones_prod_fv.R para los cálculos de energía solar a corto plazo
 
 #setwd("~/Programas/estima_FV_media")
-source("funciones_prod_FV.R")
+source("funciones_prod_fv.R")
 
 
 ############### Obtiene dataframes con las estaciones y municipios a partir de los CSVS del AEMET prev. descargados ###############################
@@ -264,8 +264,10 @@ prepareCSVS <- function (coords) {
 # input lat,long,orient,incl,area parametros de cada tejado que se esté procesando
 
 calcularEnergiaDiaSiguiente <- function (latitud, longitud, orientacion, inclinacion, area,municipio) {
-
+  
   t_dia_previo <- mean(df_observacion$ta)
+  #print ("***************************************")
+  #print (dim(df_observacion))
   
   t_9_12_diaprevio <- df_observacion %>%
     filter(hora %in% c(10:12))%>%
@@ -372,6 +374,9 @@ calcularEnergiaDiaSiguiente <- function (latitud, longitud, orientacion, inclina
   orientacion <- orientacion * pi/180
   latitud <- latitud * pi/180
   dia_Gh <- gh_previo
+  #print ("dia_Gh")
+  #print (dim(dia_Gh))
+  #view (dia_Gh)
   
  
   # Radiación extraterrestre diaria Gd0----------------
@@ -436,9 +441,14 @@ calcularEnergiaDiaSiguiente <- function (latitud, longitud, orientacion, inclina
   #kh_array <- cbind(0,0,0,0,kh9,kh10,kh11,kh12,kh13,kh14,kh15,kh16,0,0,0,0)
   #kh_array <- data.frame(kh_array)
   ## se construye un vector unidimensional
-  kh_array<- c(0,0,0,0,kh9,kh10,kh11,kh12,kh13,kh14,kh15,kh16,0,0,0,0)
-  #para pruebas, kh_array<- c(0,0,0,0,0.56,0.6,0.7,0.7,0.7,0.65,0.6,0.66,0,0,0,0)
+  #kh_array<- c(0,0,0,0,kh9,kh10,kh11,kh12,kh13,kh14,kh15,kh16,0,0,0,0)
+  #kh_array<-c(kh_array)
+  #print("BLAaaaaa")
+  #print(dim(kh_array))
   #view (kh_array)
+  #para pruebas, 
+  kh_array<- c(0,0,0,0,0.56,0.6,0.7,0.7,0.7,0.65,0.6,0.66,0,0,0,0)
+  view (kh_array)
   
   #Cálculos de coordenadas solares y rad extraterrestre para dia actual
   
@@ -449,6 +459,10 @@ calcularEnergiaDiaSiguiente <- function (latitud, longitud, orientacion, inclina
   segundos<-segundos(horas_mediodia)
   
   # 
+  print ("Temperaturas")
+  print (Predicc_temperatura_horaria)
+  view (Predicc_temperatura_horaria)
+  
   energia_h <- c()
 #Obtener dataframe de radiación para el día actual 
  for(h in 1:16){
@@ -466,15 +480,18 @@ calcularEnergiaDiaSiguiente <- function (latitud, longitud, orientacion, inclina
    kh<-kh_array[h]
    r_global_i <- calculo_radiacion_horaria_inclinada (r_global_h,kh,acimut_s,altura_s,angulo_s,angulo_salida_sol,
                                                       declinacion, latitud, inclinacion, orientacion)
-  #Calcular la energía
-  energia_producida <- energia_generada(t_ambiente = Predicc_temperatura_horaria[h], 
+  
+   
+   #Calcular la energía
+  energia_producida <- energia_generada(t_ambiente = Predicc_temperatura_horaria, 
                                         r_global_i = r_global_i, 
-                                        v_viento = Predicc_vviento_horario[h])
+                                        v_viento = Predicc_vviento_horario)
   energia_producida_silicio <- energia_paneles_silicio(area = area, energia = energia_producida)
   energia_h <- c(energia_h,energia_producida_silicio)
- } 
+ 
   
-  #view (energia_h)
+ } 
+  view(energia_h)
   as.data.frame(energia_h)
 }
   

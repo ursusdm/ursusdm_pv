@@ -29,7 +29,8 @@ prediccion_horaria_url <- "prediccion/especifica/municipio/horaria"
 
 #Importante que ya existan en el servidor dichos ficheros (descargar con script de descarga en caso de no disponer de los mismos)
 
-municipios <- read.csv ("municipios.csv",  header=TRUE, stringsAsFactors=FALSE, fileEncoding="latin1")
+municipios  <- as.data.frame(read_csv ("municipios.csv",locale=locale(encoding="latin1")) )
+#municipios  <- as.data.frame(read_csv ("/srv/shiny-server/ursus/ursusdm_pv/municipios.csv",locale=locale(encoding="latin1")) )
 
 ################################################################# Función GENÉRICA de consulta a la api #############################################
 
@@ -84,24 +85,18 @@ get_response <- function(url_base, url = "", api_key, id = ""){
 
 # Se llamará a esta función para cada provincia con la que se trabaje (MALAGA, SEVILLA, ...)
 
-obtenerMunicipios<- function (cap = "Málaga") {
-  municipios %>% 
-    filter(capital==cap) 
+obtenerMunicipios<- function (id = '29067') {
+  municipios %>%
+    filter(id %in% c('29041','29056','29068','29067') )
   
 }
 
 
 #################################################### SCRIPT ###############################################
 
-#Para cada municipio de interés, descargamos las predicciones horarias
+#Obtener los municipios de interés de estudio
 
-municipiosDeInteres <- obtenerMunicipios("Málaga")
-
-# munSevilla <- obtenerMunicipios("Sevilla")
-
-# municipiosDeInteres <- rbind (municipiosDeInteres,munSevilla)
-
-
+municipiosDeInteres <- obtenerMunicipios()
 
 ### Se descargará a las 10:00 cada día un csv con las predicciones horarias
 ### Se programa con R-CRON cron_rstudioaddin() ############################
@@ -109,7 +104,7 @@ municipiosDeInteres <- obtenerMunicipios("Málaga")
 descargarPrediccionesHorarias <- function() {
   
   for (idmun in municipiosDeInteres$id) {
-    prediccion_horaria (url_base, prediccion_horaria_url ,api_key, idmun )
+    prediccion_horaria (url_base, prediccion_horaria_url ,api_key, idmun)
   }
 
   
@@ -141,13 +136,15 @@ prediccion_horaria <- function(base, prediccion_horaria_url, api_key, idmun) {
   nombre_csv1 <- paste("prediccion_horaria","id", idmun, fecha, hora, sep = "_")
   nombre_csv1 <- paste0(nombre_csv1,".csv")
   
-  write.csv(prediccion$columnas_horas, file = paste ( "aemet/",nombre_csv1), row.names = FALSE)
+  #write.csv(prediccion$columnas_horas, file = paste ( "/srv/shiny-server/ursus/ursusdm_pv/aemet/",nombre_csv1), row.names = FALSE)
+  write.csv(prediccion$columnas_horas, file = paste ( "/Users/franciscorodriguezgomez/Documents/Developer/R/URSUS_PV/ursusdm_pv/aemet/",nombre_csv1), row.names = FALSE)
   
   # Segundo df
   nombre_csv2 <- paste("prediccion_intervalo","id", idmun, fecha, hora, sep = "_")
   nombre_csv2 <- paste0(nombre_csv2,".csv")
   
-  write.csv(prediccion$columnas_intervalo, file = paste ( "aemet/",nombre_csv2), row.names = FALSE)
+  #write.csv(prediccion$columnas_intervalo, file = paste ( "/srv/shiny-server/ursus/ursusdm_pv/aemet/",nombre_csv2), row.names = FALSE)
+  write.csv(prediccion$columnas_horas, file = paste ( "/Users/franciscorodriguezgomez/Documents/Developer/R/URSUS_PV/ursusdm_pv/aemet/",nombre_csv2), row.names = FALSE)
   
   #obs_convencional_df
   
@@ -157,8 +154,69 @@ prediccion_horaria <- function(base, prediccion_horaria_url, api_key, idmun) {
 
 
 
+
 ######## Función que devuelve  una lista con dos dataframe con el resultado de la consulta de predicciones horaria de un municipio ################
 
+# desanidamiento <- function(prediccion_horaria_df) {
+#   
+#   prediccion_dia <- prediccion_horaria_df$prediccion.dia[[1]]
+#   
+#   prediccion_horaria_df <- prediccion_horaria_df %>% unnest(prediccion.dia)
+#   
+#   col_horarias <- c("estadoCielo", "precipitacion", "nieve", "temperatura", "sensTermica", "humedadRelativa", "vientoAndRachaMax")
+#   col_prob <- c("probPrecipitacion", "probTormenta", "probNieve","vientoAndRachaMax")
+#   
+#   prediccion_cols_horarias <- prediccion_horaria_df %>% select(!col_prob)
+#   prediccion_cols_prob <- prediccion_horaria_df %>% select(!col_horarias)
+#   
+#   
+#   prediccion_cols_horarias1 <- prediccion_cols_horarias %>% 
+#     
+#     unnest(c(estadoCielo, 
+#            precipitacion, 
+#            nieve,),
+#            names_sep = ".")
+#   
+#   prediccion_cols_horarias2 <- prediccion_cols_horarias %>% 
+#     
+#     unnest(c(temperatura, 
+#              sensTermica, 
+#              humedadRelativa),
+#            names_sep = ".")
+#   
+#   prediccion_cols_prob <- prediccion_cols_prob %>% 
+#     
+#     unnest(c(probPrecipitacion, 
+#            probNieve, 
+#            probTormenta), 
+#            names_sep = ".")
+#   
+#   df_viento <- rbind(prediccion_dia$vientoAndRachaMax[[1]], 
+#                      prediccion_dia$vientoAndRachaMax[[2]],
+#                      prediccion_dia$vientoAndRachaMax[[3]])
+#   
+#   filas_viento <- seq(2, nrow (df_viento), by = 2)
+#   value <- df_viento$value[filas_viento]
+#   
+#   filas <- seq(1,nrow (df_viento), by = 2)
+#   
+#   df_viento <- cbind(df_viento[filas, 1:3], value)
+#   
+#   colnames(df_viento) <- paste("viento", colnames(df_viento), sep = ".")
+#   df_viento$viento.velocidad <- unlist(df_viento$viento.velocidad)
+#   df_viento$viento.direccion <- unlist(df_viento$viento.direccion)
+#   
+#   prediccion_cols_horarias <- cbind(prediccion_cols_horarias2, df_viento)
+#   
+#   prediccion_cols_prob <- as.data.frame(prediccion_cols_prob)
+#   
+#   prediccion_cols_horarias1 <- as.data.frame(prediccion_cols_horarias1)
+#   
+#   
+#   list ( columnas_intervalo = prediccion_cols_prob, 
+#          columnas_horas_1     = prediccion_cols_horarias,
+#          columnas_horas_2     = prediccion_cols_horarias1)
+# }
 desanidamiento <- function(prediccion_horaria_df) {
   
   prediccion_dia <- prediccion_horaria_df$prediccion.dia[[1]]
@@ -167,6 +225,10 @@ desanidamiento <- function(prediccion_horaria_df) {
   
   col_horarias <- c("estadoCielo", "precipitacion", "nieve", "temperatura", "sensTermica", "humedadRelativa", "vientoAndRachaMax")
   col_prob <- c("probPrecipitacion", "probTormenta", "probNieve","vientoAndRachaMax")
+  
+  prediccion_horaria_df$nieve[[1]] <-  prediccion_horaria_df$nieve[[1]] [-1,]
+  prediccion_horaria_df$precipitacion[[1]] <-  prediccion_horaria_df$precipitacion[[1]] [-1,]
+  prediccion_horaria_df$estadoCielo[[1]] <-  prediccion_horaria_df$estadoCielo[[1]] [-1,]
   
   prediccion_cols_horarias <- prediccion_horaria_df %>% select(!col_prob)
   prediccion_cols_prob <- prediccion_horaria_df %>% select(!col_horarias)
@@ -193,10 +255,10 @@ desanidamiento <- function(prediccion_horaria_df) {
                      prediccion_dia$vientoAndRachaMax[[2]],
                      prediccion_dia$vientoAndRachaMax[[3]])
   
-  filas_viento <- seq(2, 96, by = 2)
+  filas_viento <- seq(2, nrow(df_viento), by = 2)
   value <- df_viento$value[filas_viento]
   
-  filas <- seq(1,96, by = 2)
+  filas <- seq(1,nrow(df_viento), by = 2)
   
   df_viento <- cbind(df_viento[filas, 1:3], value)
   
