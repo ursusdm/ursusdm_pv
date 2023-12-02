@@ -34,7 +34,7 @@
 
 ### URL tool
 
-https://ursusdm.shinyapps.io/ursusdm_pv/
+http://ursus-shiny.uma.es/ursusdm_pv/
 
 ### Tecnologies
 
@@ -54,21 +54,26 @@ https://ursusdm.shinyapps.io/ursusdm_pv/
 
 <!-- USAGE EXAMPLES -->
 
-## Uso
+## How it works?
 
-* Select city and area of interest
+* Selecting area of interest of city
+* 
+  <img width="1470" alt="Captura de pantalla 2023-12-02 a las 15 33 26" src="https://github.com/ursusdm/ursusdm_pv/assets/68539118/8524ff24-9af6-41bb-ac62-4f1b31ab19f9">
+
+  
 * Set the orientation and inclination range of your interest for PV facilities
+
+ <img width="1222" alt="Captura de pantalla 2023-12-02 a las 15 34 10" src="https://github.com/ursusdm/ursusdm_pv/assets/68539118/046f6468-d65b-4219-acde-133818e5f9c5">
+
+<img width="1206" alt="Captura de pantalla 2023-12-02 a las 15 34 25" src="https://github.com/ursusdm/ursusdm_pv/assets/68539118/712bc880-3bc1-429a-acba-4a9e80b34f96">
+
+
 * Select short or longe term
+
+  
+  
 * View the energy predictions results
 
-
-[product-screenshot-1]
-[product-screenshot-2]
-[product-screenshot-3]
-[product-screenshot-4]
-[product-screenshot-5]
-[product-screenshot-6]
-[product-screenshot-7]
 
 
 
