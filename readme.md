@@ -23,50 +23,23 @@
 <br />
 <p align="center">
   
-  <a>
-    <img src="ursus_logo.jpg">
-  </a>
+  <img width="879" alt="Captura de pantalla 2023-12-02 a las 13 58 54" src="https://github.com/ursusdm/ursusdm_pv/assets/68539118/39123a70-9a9c-4bbf-92c7-459f6145b5a4">
 
-  <h3 align="center">Herramienta de ayuda para la ubicación óptima de sistemas fotovoltaicos en las ciudades</h3>
+
+  <h3 align="center">Data driven tools to assess the location of photovoltaic installations in urban areas</h3>
 
   <p align="center">
-    Conoce de forma simple e intuitiva el potencial enegético de un área úrbana de tu ciudad con tan solo unos "click"
+    The tool allows you to make short-term (hourly energy for the next day) and long-term (average daily energy) photovoltaic energy predictions that will be produced in any urban area of ​​any city with just a few clicks.
   </p>
 
 
 
-<!-- TABLE OF CONTENTS -->
-## Contenidos
-
-* [Sobre el proyecto](#sobre-el-proyecto)
-  * [Tecnologías](#Tecnologías)
-* [Cómo empezar?](#Cómo_empezar?)
-  * [Prerrequisitos](#Prerrequisitos)
-  * [Instalación](#Instalación)
-* [Uso](#Uso)
-* [Contribuciones](#Contribuciones)
-* [Contacto](#Contacto)
-* [Agradecimientos](#Agradecimientos)
-
-
-
-<!-- ABOUT THE PROJECT -->
-## Sobre el proyecto
-
-URSUS-DM PV es una herramienta de ayuda para la toma de decisiones en cuanto a la determinación de la ubicación óptima de instalaciones fotovoltaicas en áreas urbanas.
-
-...
-
-### Tecnologías
-
-La tecnología empleada actualmente para el desarrollo de la aplicación es la siguiente:
+### TecnologTechnologiesías
 
 * [R](https://cran.r-project.org/)
 * [R-Studio](https://rstudio.com/)
 * [R-Shiny](https://shiny.rstudio.com/)
-* [R-Spatial](https://rspatial.org/raster/spatial/8-rastermanip.html)
 * [Lidar](http://centrodedescargas.cnig.es/CentroDescargas/index.jsp)
-
 
 
 <!-- Cómo empezar? -->
