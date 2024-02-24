@@ -23,7 +23,8 @@
 <br />
 <p align="center">
   
-  <img width="879" alt="Captura de pantalla 2023-12-02 a las 13 58 54" src="https://github.com/ursusdm/ursusdm_pv/assets/68539118/39123a70-9a9c-4bbf-92c7-459f6145b5a4">
+
+  <img width="791" alt="Captura de pantalla 2024-02-24 a las 10 38 07" src="https://github.com/ursusdm/ursusdm_pv/assets/68539118/da646d8b-c75f-43ff-99bb-cb57559cc538">
 
 
   <h3 align="center">Data driven tools to assess the location of photovoltaic installations in urban areas</h3>
