@@ -11,7 +11,7 @@
 
 library(igraph)
 library(raster)
-library (rgdal)
+#library (rgdal)
 library(RStoolbox)
 #library(RGISTools)
 library(zoom)
@@ -80,10 +80,12 @@ automatizacionScripts <- function () {
 
 getExtent <- function(catalogo) {
   extentList <- c ()
+
   for (i in 1:nrow(catalogo) ) {
     im <- catalogo [i,]
+    print (sf::st_bbox(im))
     # cada imagen lidar se reprojecta a latitud y longitud y cogemos la extensión
-    e <- extent (im)
+    e <- sf::st_bbox(im)
     #x lng y lat sW (abajo izq)   NE (arriba derecha)
     lng1 <- xmin (extent (e))
     lat1 <- ymin (extent (e))
@@ -601,7 +603,20 @@ shinyServer(function(input, output) {
       
       #################
       #Preparamos los CSVS para los cálculos a c/p a partir de las coords del munic. select.
-      prepareCSVS (coords)
+      
+      response = prepareCSVS (coords)
+      
+      if (is_null(response)){ ## datos aemet no disponibles
+       
+          showModal(modalDialog(
+            title = "Short-term forecasts not available today",
+            "Error downloading data from AEMET weather service",
+            easyClose = TRUE,
+            footer = NULL
+          ))
+        
+      }
+        
       #######################################
       return(coords)
     })

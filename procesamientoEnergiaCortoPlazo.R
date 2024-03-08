@@ -83,7 +83,6 @@ sustitucion <- function(df){
 
 # Devuelve un dataframe con las observaciones convencionales del día anterior
 
-
 observacion_conv_df <- function(id_estacion, fecha, hora1, hora2) {
   
   ayer <- as.character(as.Date(fecha) - 1)
@@ -91,27 +90,37 @@ observacion_conv_df <- function(id_estacion, fecha, hora1, hora2) {
   obs_conv_hora1 <- paste("observacion_convencional","id", id_estacion, fecha, hora1, sep = "_")
   obs_conv_hora1 <- paste0(obs_conv_hora1,".csv")
   
-  # Se abre el csv de observaciones convencionales de la estación más cercana al CSV de la 1ª hora programada de descarga
-  obs_conv_hora1_df <-  read_csv(file = paste ( "aemet/",obs_conv_hora1,sep = " "),locale=locale(encoding="latin1"))
   obs_conv_hora2 <- paste("observacion_convencional","id", id_estacion, fecha, hora2, sep = "_")
   obs_conv_hora2 <- paste0(obs_conv_hora2,".csv")
   
-  # Se abre el csv de observaciones convencionales de la estación más cercana al CSV de la 2º hora programada de descarga
-  obs_conv_hora2_df <- read_csv(file = paste ("aemet/",obs_conv_hora2,sep=" "),locale=locale(encoding="latin1"))
+  file_hora_1 = paste ( "aemet/",obs_conv_hora1,sep = " ")
+  file_hora_2 = paste ( "aemet/",obs_conv_hora2,sep = " ")
   
-  obs_conv_hora1_df <- obs_conv_hora1_df %>% 
-    mutate(dia = as.Date(fint)) %>%
-    filter(dia == ayer)
+  if (file.exists (file_hora_1) && (file.exists (file_hora_2))){
+    # Se abre el csv de observaciones convencionales de la estación más cercana al CSV de la 1ª hora programada de descarga
+    obs_conv_hora1_df <-  read_csv(file = paste ( "aemet/",obs_conv_hora1,sep = " "),locale=locale(encoding="latin1"))
+    # Se abre el csv de observaciones convencionales de la estación más cercana al CSV de la 2º hora programada de descarga
+    obs_conv_hora2_df <- read_csv(file = paste ("aemet/",obs_conv_hora2,sep=" "),locale=locale(encoding="latin1"))
+    
+    obs_conv_hora1_df <- obs_conv_hora1_df %>% 
+      mutate(dia = as.Date(fint)) %>%
+      filter(dia == ayer)
+    
+    obs_conv_hora2_df <- obs_conv_hora2_df %>% 
+      mutate(dia = as.Date(fint)) %>%
+      filter(dia == ayer)
+    
+    obs_dia_df <- merge.data.frame(obs_conv_hora1_df, obs_conv_hora2_df, by = colnames(obs_conv_hora1_df), all =  TRUE) %>%
+      mutate(hora = hour(fint))
+    
+    obs_dia_df
+  }
+  else {
+    # show message. not csv for short term calculation for next day
+    return (NULL)
+  }
+  
 
-  obs_conv_hora2_df <- obs_conv_hora2_df %>% 
-    mutate(dia = as.Date(fint)) %>%
-    filter(dia == ayer)
-  
-  obs_dia_df <- merge.data.frame(obs_conv_hora1_df, obs_conv_hora2_df, by = colnames(obs_conv_hora1_df), all =  TRUE) %>%
-    mutate(hora = hour(fint))
-  
-  obs_dia_df
-  
 }
 
 
@@ -229,6 +238,13 @@ prepareCSVS <- function (coords) {
   } 
   else {
     df_observacion <<- observacion_conv_df(id_estacion = estaciones2$indicativo, fecha = ayer, hora1 = "00h", hora2 = "10h")
+  }
+  print ("df_observacion:")
+  print (df_observacion)
+  if (is_null(df_observacion)){
+    print ("INSIDE")
+    return (NULL)
+    print ("OUTSIDE")
   }
   
   #predicciones

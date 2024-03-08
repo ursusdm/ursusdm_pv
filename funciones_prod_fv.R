@@ -209,8 +209,12 @@ radiacion_directa_inclinada <- function(r_directa_h, declinacion,
     TRUE  ~ costhita
   )
   costhitaz <- sin(declinacion) * sin(latitud) + cos(declinacion) * cos(latitud) * cos(angulo_solar_i)
-  rb<-case_when(
-    costhitaz > 0 && !near(costhitaz, 0)  ~ costhita/costhitaz,
+  print ("costhitaz")
+  print (costhitaz)
+  print ("costhita")
+  print (costhita)
+  rb<-dplyr::case_when(
+    ((costhitaz > 0) & near(costhitaz, 0))  ~ (costhita/costhitaz),
     TRUE  ~ 1
   )
   r_directa_i <- r_directa_h * rb
