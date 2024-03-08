@@ -51,9 +51,8 @@ shinyUI(dashboardPage(
                                 status = "primary", 
                                 solidHeader = TRUE,
                                 selectInput("ciudad", "Ciudad:",
-                                            c("Malaga" = "Malaga",
-                                              "Casares" = "Casares",
-                                              "Gaucin" = "Gaucin"), selected = "Malaga" ),
+                                            c("Malaga" = "Malaga","Casares" = "Casares",
+                                              "Gaucin" = "Gaucin"), selected = "Málaga" ),
                                 hr(),
                                 helpText("Seleccione el municipio de interés"),
                                 leafletOutput("mymap"),
@@ -177,7 +176,7 @@ shinyUI(dashboardPage(
                     h2("Predicciones de energía solar media diaria"),
                     fluidRow( class = "text-center",
                               infoBoxOutput("totalRoofAreaBox"),
-                              infoBoxOutput ("totalEnergyAreaBox",width = 6)          
+                              infoBoxOutput ("totalEnergyAreaBox")          
                     ),
                     fluidRow( class = "text-center",
                               

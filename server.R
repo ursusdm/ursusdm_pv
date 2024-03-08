@@ -36,7 +36,6 @@ library (cronR)
 options(shiny.sanitize.errors = FALSE)
 pdf(NULL)
 
-
 #Add energy production calculation functions script
 source("funciones_prod_FV.R")
 
@@ -584,10 +583,12 @@ shinyServer(function(input, output) {
       dataFiles <- paste("LidarData","/",input$ciudad,sep="")
       print(paste("dataFiles",dataFiles))
       files<-list.files(path=dataFiles, full.names = TRUE)
-      
+      #cat(file=stderr(),files)
+    
       print (paste("files:",files))
+      #files <- list.files(path="LidarData/Malaga", full.names = TRUE)
       ctg <<- catalog(files)
-      
+     
       # getExtents for every lidar image in catalog
       extents <<- getExtent (ctg)
       
@@ -922,15 +923,13 @@ shinyServer(function(input, output) {
       #ADataset completo con los cálculos de producción a un día vista
       fullDS <- addnewDataToDataset2 (areaDS)
       #view(fullDS)
-      
-      # fullDS %>% unnest_wider (produccion)
-      
-      fullDSParse <- unnest_wider(fullDS, produccion)
+     
+     # fullDSParse <- fullDS %>% unnest_wider (produccion)
+     
+      fullDSParse <- unnest_wider(fullDS, produccion,names_sep="")
       names (fullDSParse) <- c("id","m2","lat","lng","inc.","orient.","5",
                                 "6","7","8","9","10","11","12","13","14","15"
                                 ,"16","17","18","19","20")
-      
-      # SUBIR al server CON  unnest_wider(fullDS, produccion,names_sep = "" )
       
        #names (fullDSParse) <- c("id","m2","lat","lng","inc.","orient.",c(0,23))
       

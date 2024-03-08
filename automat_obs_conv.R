@@ -30,8 +30,8 @@ observaciones_convencionales_url <- "observacion/convencional/datos/estacion"
 
 ################################################################# Función GENÉRICA de consulta a la api #############################################
 #LEER DATASET CON LAS ESTACIONES METEOR.
-estacionesMeteorologicas <- as.data.frame(read_csv("estaciones_meteorologicas.csv",locale=locale(encoding="latin1")))
-#estacionesMeteorologicas <- as.data.frame(read_csv("/srv/shiny-server/ursus/ursusdm_pv/estaciones_meteorologicas.csv",locale=locale(encoding="latin1")))
+#estacionesMeteorologicas <- as.data.frame(read_csv("estaciones_meteorologicas.csv",locale=locale(encoding="latin1")))
+estacionesMeteorologicas <- as.data.frame(read_csv("/srv/shiny-server/ursus/ursusdm_pv/estaciones_meteorologicas.csv",locale=locale(encoding="latin1")))
 
 ################################################################# Función GENÉRICA de consulta a la api #############################################
 
@@ -126,8 +126,8 @@ observacion_convencional <- function(base, observacion_convencional, api_key, id
   
   nombre_csv <- paste("observacion_convencional","id", idema, fecha, hora, sep = "_")
   nombre_csv <- paste0(nombre_csv,".csv")
-  #write.csv(obs_convencional_df, file = paste ( "/srv/shiny-server/ursus/ursusdm_pv/aemet/",nombre_csv), row.names = FALSE)
-  write.csv(obs_convencional_df, file = paste ( "/Users/franciscorodriguezgomez/Documents/Developer/R/URSUS_PV/ursusdm_pv/aemet/",nombre_csv), row.names = FALSE)
+  write.csv(obs_convencional_df, file = paste ( "/srv/shiny-server/ursus/ursusdm_pv/aemet/",nombre_csv), row.names = FALSE)
+  #write.csv(obs_convencional_df, file = paste ( "/Users/franciscorodriguezgomez/Documents/Developer/R/URSUS_PV/ursusdm_pv/aemet/",nombre_csv), row.names = FALSE)
   
   obs_convencional_df
   

@@ -29,8 +29,8 @@ observaciones_radiacion_url <- "red/especial/radiacion"
 
 #estacionesRadiacion <- as.data.frame(read_csv("/srv/shiny-server/ursus/ursusdm_pv/scriptAEMET/estaciones_radiacion.csv",locale=locale(encoding="latin1")))
 
-estacionesRadiacion <- as.data.frame(read_csv("estaciones_radiacion.csv",locale=locale(encoding="latin1")))
-#estacionesRadiacion <- as.data.frame(read_csv("/srv/shiny-server/ursus/ursusdm_pv/estaciones_radiacion.csv",locale=locale(encoding="latin1")))
+#estacionesRadiacion <- as.data.frame(read_csv("estaciones_radiacion.csv",locale=locale(encoding="latin1")))
+estacionesRadiacion <- as.data.frame(read_csv("/srv/shiny-server/ursus/ursusdm_pv/estaciones_radiacion.csv",locale=locale(encoding="latin1")))
 
 ################################################################# Función GENÉRICA de consulta a la api #############################################
 
@@ -120,25 +120,12 @@ radiacion <- function(base, radiacion, api_key) {
   csv_rad$Indicativo[malaga] <- paste0(csv_rad$Indicativo[malaga], "X")
   
   fecha <- as.character(Sys.Date()-1)
-  
+ 
   nombre_csv <- paste("radiacion_solar", fecha, sep = "_")
   nombre_csv <- paste0(nombre_csv,".csv")
-  #write.csv(csv_rad, file = paste ("/srv/shiny-server/ursus/ursusdm_pv/aemet/",nombre_csv), row.names = FALSE)
-  
-  
-  #view (csv_rad)
-  
   names(csv_rad) <- gsub("\\..*", "", names(csv_rad))
-  
-  write.csv(csv_rad, file = paste ("/Users/franciscorodriguezgomez/Documents/Developer/R/URSUS_PV/ursusdm_pv/aemet/",nombre_csv), row.names = FALSE)
-  
-  #view (csv_rad)
-  
-  #gsub("\\..*", "", x) 
-  #gsub(".*_", "", a)
-  #names(csv_rad)
-
-  #view (csv_rad)
+  write.csv(csv_rad, file = paste ("/srv/shiny-server/ursus/ursusdm_pv/aemet/",nombre_csv), row.names = FALSE)
+  #write.csv(csv_rad, file = paste ("/Users/franciscorodriguezgomez/Documents/Developer/R/URSUS_PV/ursusdm_pv/aemet/",nombre_csv), row.names = FALSE)
   
   csv_rad
   

@@ -29,8 +29,9 @@ prediccion_horaria_url <- "prediccion/especifica/municipio/horaria"
 
 #Importante que ya existan en el servidor dichos ficheros (descargar con script de descarga en caso de no disponer de los mismos)
 
-municipios  <- as.data.frame(read_csv ("municipios.csv",locale=locale(encoding="latin1")) )
-#municipios  <- as.data.frame(read_csv ("/srv/shiny-server/ursus/ursusdm_pv/municipios.csv",locale=locale(encoding="latin1")) )
+#municipios  <- as.data.frame(read_csv ("/srv/shiny-server/ursus/ursusdm_pv/scriptAEMET/municipios.csv")) 
+#municipios  <- as.data.frame(read_csv ("municipios.csv",locale=locale(encoding="latin1")) )
+municipios  <- as.data.frame(read_csv ("/srv/shiny-server/ursus/ursusdm_pv/municipios.csv",locale=locale(encoding="latin1")) )
 
 ################################################################# Función GENÉRICA de consulta a la api #############################################
 
@@ -86,8 +87,8 @@ get_response <- function(url_base, url = "", api_key, id = ""){
 # Se llamará a esta función para cada provincia con la que se trabaje (MALAGA, SEVILLA, ...)
 
 obtenerMunicipios<- function (id = '29067') {
-  municipios %>%
-    filter(id %in% c('29041','29056','29068','29067') )
+  municipios %>% 
+    filter(id %in% c('29041','29056','29068','29067') ) 
   
 }
 
@@ -136,15 +137,15 @@ prediccion_horaria <- function(base, prediccion_horaria_url, api_key, idmun) {
   nombre_csv1 <- paste("prediccion_horaria","id", idmun, fecha, hora, sep = "_")
   nombre_csv1 <- paste0(nombre_csv1,".csv")
   
-  #write.csv(prediccion$columnas_horas, file = paste ( "/srv/shiny-server/ursus/ursusdm_pv/aemet/",nombre_csv1), row.names = FALSE)
-  write.csv(prediccion$columnas_horas, file = paste ( "/Users/franciscorodriguezgomez/Documents/Developer/R/URSUS_PV/ursusdm_pv/aemet/",nombre_csv1), row.names = FALSE)
+  write.csv(prediccion$columnas_horas, file = paste ( "/srv/shiny-server/ursus/ursusdm_pv/aemet/",nombre_csv1), row.names = FALSE)
+  #write.csv(prediccion$columnas_horas, file = paste ( "/Users/franciscorodriguezgomez/Documents/Developer/R/URSUS_PV/ursusdm_pv/aemet/",nombre_csv1), row.names = FALSE)
   
   # Segundo df
   nombre_csv2 <- paste("prediccion_intervalo","id", idmun, fecha, hora, sep = "_")
   nombre_csv2 <- paste0(nombre_csv2,".csv")
   
-  #write.csv(prediccion$columnas_intervalo, file = paste ( "/srv/shiny-server/ursus/ursusdm_pv/aemet/",nombre_csv2), row.names = FALSE)
-  write.csv(prediccion$columnas_horas, file = paste ( "/Users/franciscorodriguezgomez/Documents/Developer/R/URSUS_PV/ursusdm_pv/aemet/",nombre_csv2), row.names = FALSE)
+  write.csv(prediccion$columnas_intervalo, file = paste ( "/srv/shiny-server/ursus/ursusdm_pv/aemet/",nombre_csv2), row.names = FALSE)
+  #write.csv(prediccion$columnas_horas, file = paste ( "/Users/franciscorodriguezgomez/Documents/Developer/R/URSUS_PV/ursusdm_pv/aemet/",nombre_csv2), row.names = FALSE)
   
   #obs_convencional_df
   
