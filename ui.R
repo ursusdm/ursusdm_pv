@@ -51,8 +51,11 @@ shinyUI(dashboardPage(
                                 status = "primary", 
                                 solidHeader = TRUE,
                                 selectInput("ciudad", "Ciudad:",
-                                            c("Malaga" = "Malaga","Casares" = "Casares",
-                                              "Gaucin" = "Gaucin"), selected = "Málaga" ),
+                                            c("Malaga" = "Malaga",
+                                              "Casares" = "Casares",
+                                              "Gaucin" = "Gaucin",
+                                              "Tolox" = "Tolox"
+                                            ), selected = "Málaga" ),
                                 hr(),
                                 helpText("Seleccione el municipio de interés"),
                                 leafletOutput("mymap"),

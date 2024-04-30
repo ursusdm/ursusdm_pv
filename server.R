@@ -549,9 +549,9 @@ createRoofAreaDataset <- function (cc) {
 
 ################Actualizar Municipios ####################
 
-coordinatesMunicipios <- data.frame(ciudad = c('Malaga', 'Casares','Gaucin'),
-                         Latitude = c(36.719444, 36.43999824,36.5166646 ),
-                         Longitude = c(-4.420000, -5.270332252,-5.3166654))
+coordinatesMunicipios <- data.frame(ciudad = c('Malaga', 'Casares','Gaucin','Tolox'),
+                         Latitude = c(36.719444, 36.43999824,36.5166646,36.6851814 ),
+                         Longitude = c(-4.420000, -5.270332252,-5.3166654,-4.9093267))
 
  
 
