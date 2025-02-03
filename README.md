@@ -87,6 +87,10 @@ José del Campo Ávila  - jcampo@uma.es
 </br>
 Francisco Rodríguez Gómez  - francisco.rdg.gmz@uma.es
 
+## Publications
+
+10.1016/j.eswa.2022.117349
+
 
 
 <!-- ACKNOWLEDGEMENTS -->
